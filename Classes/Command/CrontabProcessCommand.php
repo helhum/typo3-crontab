@@ -25,8 +25,9 @@ class CrontabProcessCommand extends Command
 
         $taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
         $crontab = GeneralUtility::makeInstance(Crontab::class);
-        $processManager = GeneralUtility::makeInstance(ProcessManager::class, $taskRepository, $crontab);
+        $processManager = GeneralUtility::makeInstance(ProcessManager::class, $crontab);
+        $taskDefinition = $taskRepository->findByIdentifier($taskIdentifier);
 
-        return $processManager->run($taskIdentifier, $this->getApplication(), $input, $output);
+        return $processManager->run($taskDefinition, $this->getApplication(), $input, $output);
     }
 }

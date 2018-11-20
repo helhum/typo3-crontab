@@ -22,10 +22,6 @@ class ProcessManager implements LoggerAwareInterface
 
     private const runningTable = 'tx_crontab_running';
     /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
-    /**
      * @var Crontab
      */
     private $crontab;
@@ -35,17 +31,16 @@ class ProcessManager implements LoggerAwareInterface
     private $databaseConnection;
 
     public function __construct(
-        TaskRepository $taskRepository = null,
         Crontab $crontab = null,
         Connection $databaseConnection = null
     ) {
-        $this->taskRepository = $taskRepository ?? new TaskRepository();
         $this->crontab = $crontab ?? new Crontab();
         $this->databaseConnection = $databaseConnection ?? GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(self::runningTable);
     }
 
-    public function isRunning(string $taskIdentifier): bool
+    public function isRunning(TaskDefinition $taskDefinition): bool
     {
+        $taskIdentifier = $taskDefinition->getIdentifier();
         $isRunning = false;
 
         $result = $this->databaseConnection->select(
@@ -59,15 +54,16 @@ class ProcessManager implements LoggerAwareInterface
             $isRunning = posix_getpgid($processId) !== false;
             if (!$isRunning) {
                 // The process has crashed or was terminated by us, remove it from our list
-                $this->finish($taskIdentifier, $processId);
+                $this->finish($taskDefinition->createProcess($processId));
             }
         }
 
         return $isRunning;
     }
 
-    public function terminate(string $taskIdentifier): void
+    public function terminate(TaskDefinition $taskDefinition): void
     {
+        $taskIdentifier = $taskDefinition->getIdentifier();
         $result = $this->databaseConnection->select(
             ['process_id'],
             self::runningTable,
@@ -83,10 +79,10 @@ class ProcessManager implements LoggerAwareInterface
         }
     }
 
-    public function run(string $taskIdentifier, Application $application, InputInterface $input = null, OutputInterface $output = null): int
+    public function run(TaskDefinition $taskDefinition, Application $application, InputInterface $input = null, OutputInterface $output = null): int
     {
-        $taskDefinition = $this->taskRepository->findByIdentifier($taskIdentifier);
-        if (!$taskDefinition->allowsMultipleExecutions() && $this->isRunning($taskIdentifier)) {
+        $taskIdentifier = $taskDefinition->getIdentifier();
+        if (!$taskDefinition->allowsMultipleExecutions() && $this->isRunning($taskDefinition)) {
             $this->logger->info(sprintf('Task "%s" is running and is not configured for parallel execution, skipping.', $taskIdentifier));
 
             return 0;
@@ -94,8 +90,8 @@ class ProcessManager implements LoggerAwareInterface
 
         // Re-schedule for next execution if it was scheduled before
         // TODO: Should we rather throw an exception here?
-        if ($this->crontab->isScheduled($taskIdentifier)) {
-            $this->crontab->schedule($taskIdentifier, $taskDefinition->getNextDueExecution());
+        if ($this->crontab->isScheduled($taskDefinition)) {
+            $this->crontab->schedule($taskDefinition);
         }
 
         $process = $this->start($taskDefinition);
@@ -108,7 +104,7 @@ class ProcessManager implements LoggerAwareInterface
             $this->logger->error(sprintf('Task "%s" failed with exception.', $taskIdentifier), ['exception' => $e]);
             throw $e;
         } finally {
-            $this->finish($taskIdentifier, $process->getId());
+            $this->finish($process);
         }
         if (!$success) {
             $this->logger->error(sprintf('Task "%s" did not complete successfully.', $taskIdentifier));
@@ -144,13 +140,13 @@ class ProcessManager implements LoggerAwareInterface
         return $taskDefinition->createProcess($processId);
     }
 
-    private function finish(string $taskIdentifier, int $processId): void
+    private function finish(Process $process): void
     {
         $this->databaseConnection->delete(
             self::runningTable,
             [
-                'identifier' => $taskIdentifier,
-                'process_id' => $processId,
+                'identifier' => $process->getTaskIdentifier(),
+                'process_id' => $process->getId(),
             ]
         );
     }

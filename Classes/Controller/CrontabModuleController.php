@@ -47,7 +47,7 @@ class CrontabModuleController extends ActionController
     {
         $this->taskRepository = $taskRepository;
         $this->crontab = $crontab;
-        $this->processManager = $processManager ?? GeneralUtility::makeInstance(ProcessManager::class, $taskRepository, $crontab);
+        $this->processManager = $processManager ?? GeneralUtility::makeInstance(ProcessManager::class, $crontab);
         parent::__construct();
     }
 
