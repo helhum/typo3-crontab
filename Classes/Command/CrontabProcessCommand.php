@@ -16,12 +16,7 @@ class CrontabProcessCommand extends Command
     public function configure(): void
     {
         $this->setDescription('Runs a Crontab process.')
-            ->addArgument('taskIdentifier', InputArgument::REQUIRED);
-    }
-
-    public function isHidden(): bool
-    {
-        return true;
+            ->addArgument('taskIdentifier', InputArgument::REQUIRED, 'Identifier of task that should be run');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int

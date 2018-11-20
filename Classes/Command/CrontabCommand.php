@@ -35,7 +35,7 @@ class CrontabCommand extends Command
         $commandDispatcher = CommandDispatcher::createFromCommandRun();
         foreach ($crontab->dueTasks() as $taskIdentifier) {
             try {
-                $commandDispatcher->executeCommand('crontab:process', [$taskIdentifier]);
+                $commandDispatcher->executeCommand('crontab:execute', [$taskIdentifier]);
             } catch (FailedSubProcessCommandException $e) {
                 // What shall we do here?
                 throw $e;

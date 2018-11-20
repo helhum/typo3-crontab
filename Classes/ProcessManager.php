@@ -122,7 +122,7 @@ class ProcessManager implements LoggerAwareInterface
         $commandDispatcher = CommandDispatcher::create(getenv('TYPO3_PATH_COMPOSER_ROOT') . '/vendor/helhum/typo3-console/typo3cms');
         try {
             $commandDispatcher->executeCommand(
-                'crontab:process',
+                'crontab:execute',
                 [
                     $taskIdentifier,
                 ]

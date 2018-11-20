@@ -9,13 +9,8 @@ declare(strict_types=1);
 return [
     'crontab:run' => [
         'class' => \Helhum\TYPO3\Crontab\Command\CrontabCommand::class,
-        'aliases' => ['scheduler:run'],
-        'replace' => [
-            'typo3_console:scheduler:run',
-            'scheduler:scheduler:run',
-        ],
     ],
-    'crontab:process' => [
+    'crontab:execute' => [
         'class' => \Helhum\TYPO3\Crontab\Command\CrontabProcessCommand::class,
     ],
 ];
