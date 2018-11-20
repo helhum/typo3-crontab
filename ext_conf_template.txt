@@ -1,0 +1,2 @@
+# cat=basic//; type=string; label=Path to PHP binary
+phpBinary =

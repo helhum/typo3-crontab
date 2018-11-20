@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
+	<file t3:id="1542551975" source-language="en" datatype="plaintext" original="messages" date="2018-11-18T20:22:37Z" product-name="crontab">
+		<header/>
+		<body>
+			<trans-unit id="crontab">
+				<source>Crontab</source>
+			</trans-unit>
+			<trans-unit id="task">
+				<source>Task</source>
+			</trans-unit>
+			<trans-unit id="yes">
+				<source>Yes</source>
+			</trans-unit>
+			<trans-unit id="no">
+				<source>No</source>
+			</trans-unit>
+			<trans-unit id="label.serverTime">
+				<source>Server time</source>
+			</trans-unit>
+			<trans-unit id="label.identifier">
+				<source>ID</source>
+			</trans-unit>
+			<trans-unit id="label.group">
+				<source>Group name</source>
+			</trans-unit>
+			<trans-unit id="label.group.taskCount">
+				<source>Amount of tasks in this group</source>
+			</trans-unit>
+			<trans-unit id="label.frequency">
+				<source>Frequency</source>
+			</trans-unit>
+			<trans-unit id="label.parallel">
+				<source>Allow parallel execution</source>
+			</trans-unit>
+			<trans-unit id="label.nextRun">
+				<source>Next scheduled run</source>
+			</trans-unit>
+			<trans-unit id="label.checkAll">
+				<source>Check/uncheck all</source>
+			</trans-unit>
+			<trans-unit id="msg.serverTime">
+				<source>Current server time is %s.</source>
+			</trans-unit>
+			<trans-unit id="msg.serverTimeHelp">
+				<source>All dates and times are measured according to the server's time, as tasks are run purely on the server-side.</source>
+			</trans-unit>
+			<trans-unit id="status.progress">
+				<source>Progress</source>
+			</trans-unit>
+			<trans-unit id="status.running">
+				<source>running</source>
+			</trans-unit>
+			<trans-unit id="status.disabled">
+				<source>disabled</source>
+			</trans-unit>
+			<trans-unit id="status.late">
+				<source>late</source>
+			</trans-unit>
+			<trans-unit id="status.late.description">
+				<source>Scheduled, will run on next possible execution</source>
+			</trans-unit>
+			<trans-unit id="label.stop">
+				<source>Stop task "%s"</source>
+			</trans-unit>
+			<trans-unit id="msg.stop">
+				<source>Are you sure you want to terminate all running processes for task "%s"?.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
