@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab\Repository;
 
+use Helhum\TYPO3\Crontab\Error\TaskNotFound;
 use Helhum\TYPO3\Crontab\Task\TaskDefinition;
 
 /***************************************************************
@@ -47,8 +48,17 @@ class TaskRepository
         return $groupedTasks;
     }
 
+    public function hasTask(string $identifier): bool
+    {
+        return isset($this->taskConfiguration[$identifier]);
+    }
+
     public function findByIdentifier(string $identifier): TaskDefinition
     {
-        return TaskDefinition::createFromConfig($identifier, $this->taskConfiguration[$identifier] ?? []);
+        if (!isset($this->taskConfiguration[$identifier])) {
+            throw new TaskNotFound(sprintf('Task with identifier "%s" is not defined', $identifier), 1542737003);
+        }
+
+        return TaskDefinition::createFromConfig($identifier, $this->taskConfiguration[$identifier]);
     }
 }

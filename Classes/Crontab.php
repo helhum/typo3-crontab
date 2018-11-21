@@ -2,13 +2,29 @@
 declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab;
 
+use Helhum\TYPO3\Crontab\Repository\TaskRepository;
 use Helhum\TYPO3\Crontab\Task\TaskDefinition;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Crontab
 {
     private const scheduledTable = 'tx_crontab_scheduled';
+    /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+    /**
+     * @var Connection
+     */
+    private $connection;
+
+    public function __construct(TaskRepository $taskRepository = null, Connection $connection = null)
+    {
+        $this->taskRepository = $taskRepository ?? GeneralUtility::makeInstance(TaskRepository::class);
+        $this->connection = $connection ?? GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(self::scheduledTable);
+    }
 
     public function schedule(TaskDefinition $definition, \DateTimeInterface $executionTime = null): void
     {
@@ -17,16 +33,15 @@ class Crontab
         $fields = [
             'next_execution' => $executionTime->getTimestamp(),
         ];
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(self::scheduledTable);
         if (!$this->isScheduled($definition)) {
             $fields['identifier'] = $identifier;
-            $connection->insert(
+            $this->connection->insert(
                 self::scheduledTable,
                 $fields
             );
         }
 
-        $connection->update(
+        $this->connection->update(
             self::scheduledTable,
             $fields,
             ['identifier' => $identifier]
@@ -35,21 +50,14 @@ class Crontab
 
     public function removeFromSchedule(TaskDefinition $definition): void
     {
-        $identifier = $definition->getIdentifier();
-        GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable(self::scheduledTable)
-            ->delete(
-                self::scheduledTable,
-                ['identifier' => $identifier]
-            );
+        $this->removeFromScheduledTable($definition->getIdentifier());
     }
 
     public function isScheduled(TaskDefinition $definition): bool
     {
         $identifier = $definition->getIdentifier();
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(self::scheduledTable);
 
-        return $connection->count(
+        return $this->connection->count(
             'identifier',
             self::scheduledTable,
             ['identifier' => $identifier]
@@ -58,8 +66,7 @@ class Crontab
 
     public function nextExecution(TaskDefinition $definition): \DateTimeImmutable
     {
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(self::scheduledTable);
-        $timestamp = $connection->select(
+        $timestamp = $this->connection->select(
             ['next_execution'],
             self::scheduledTable,
             ['identifier' => $definition->getIdentifier()]
@@ -72,8 +79,7 @@ class Crontab
 
     public function dueTasks(): \Generator
     {
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(self::scheduledTable);
-        $statement = $connection->select(
+        $statement = $this->connection->select(
             ['identifier', 'next_execution'],
             self::scheduledTable,
             [],
@@ -84,7 +90,16 @@ class Crontab
             if ($scheduleInformation['next_execution'] > time()) {
                 break;
             }
+            if (!$this->taskRepository->hasTask($scheduleInformation['identifier'])) {
+                $this->removeFromScheduledTable($scheduleInformation['identifier']);
+                continue;
+            }
             yield $scheduleInformation['identifier'];
         }
+    }
+
+    private function removeFromScheduledTable(string $identifier): void
+    {
+        $this->connection->delete(self::scheduledTable, ['identifier' => $identifier]);
     }
 }
