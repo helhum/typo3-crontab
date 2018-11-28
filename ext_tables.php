@@ -1,5 +1,6 @@
 <?php
 (function () {
+    /** @noinspection TranslationMissingInspection */
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
         'Helhum.TYPO3.Crontab',
         'system',
