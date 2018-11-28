@@ -47,6 +47,9 @@
 										<f:if condition="!{isScheduled} && !{isRunning}">
 											<span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-default pull-right"><f:translate key="status.disabled"/></span>
 										</f:if>
+										<f:if condition="{isRunning}">
+											<span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-danger pull-right"><f:translate key="status.running"/></span>
+										</f:if>
 										<span class="name">
 											<f:link.action action="edit" arguments="{identifier: task.identifier}">
 												{task.title}
@@ -108,18 +111,6 @@
 											</f:if>
 										</div>
 										<div class="btn-group" role="group">
-											<f:if condition="{isScheduled} && !{isRunning}">
-												<f:then>
-													<a class="btn btn-default" data-toggle="tooltip" data-container="body" href="{f:uri.action(action: 'schedule', arguments: '{identifier: task.identifier}')}">
-														<core:icon identifier="extensions-scheduler-run-task-cron"/>
-													</a>
-												</f:then>
-												<f:else>
-													<span class="btn btn-default disabled">
-														<core:icon identifier="empty-empty"/>
-													</span>
-												</f:else>
-											</f:if>
 											<f:if condition="{isRunning}">
 												<f:then>
 													<div class="btn-group" role="group">
@@ -139,9 +130,18 @@
 													</div>
 												</f:then>
 												<f:else>
-													<a class="btn btn-default" data-toggle="tooltip" data-container="body" href="{f:uri.action(action: 'execute', arguments: '{identifier: task.identifier}')}" title="{f:translate(key:'action.run_task')}">
-														<core:icon identifier="extensions-scheduler-run-task"/>
-													</a>
+													<f:if condition="{isScheduled}">
+														<f:then>
+															<a class="btn btn-default" data-toggle="tooltip" data-container="body" href="{f:uri.action(action: 'schedule', arguments: '{identifier: task.identifier}')}">
+																<core:icon identifier="extensions-scheduler-run-task-cron"/>
+															</a>
+														</f:then>
+														<f:else>
+															<span class="btn btn-default disabled">
+																<core:icon identifier="empty-empty"/>
+															</span>
+														</f:else>
+													</f:if>
 												</f:else>
 											</f:if>
 										</div>

@@ -2,11 +2,8 @@
 declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab;
 
-use Helhum\TYPO3\Crontab\Repository\TaskRepository;
 use Helhum\TYPO3\Crontab\Task\Process;
 use Helhum\TYPO3\Crontab\Task\TaskDefinition;
-use Helhum\Typo3Console\Mvc\Cli\CommandDispatcher;
-use Helhum\Typo3Console\Mvc\Cli\FailedSubProcessCommandException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Console\Application;
@@ -111,25 +108,6 @@ class ProcessManager implements LoggerAwareInterface
         }
 
         return 0;
-    }
-
-    public function runIsolated(string $taskIdentifier): void
-    {
-        $commandDispatcher = CommandDispatcher::create(getenv('TYPO3_PATH_COMPOSER_ROOT') . '/vendor/helhum/typo3-console/typo3cms');
-        try {
-            $commandDispatcher->executeCommand(
-                'crontab:execute',
-                [
-                    $taskIdentifier,
-                ]
-            );
-        } catch (FailedSubProcessCommandException $e) {
-            $originalException = $e->getPrevious();
-            if ($originalException) {
-                throw $originalException;
-            }
-            throw $e;
-        }
     }
 
     private function start(TaskDefinition $taskDefinition): Process

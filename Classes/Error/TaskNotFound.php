@@ -6,5 +6,4 @@ use TYPO3\CMS\Core\Exception;
 
 class TaskNotFound extends Exception
 {
-
 }

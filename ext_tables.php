@@ -6,7 +6,7 @@
         'tx_Crontab',
         '',
         [
-            'CrontabModule' => 'list, toggleSchedule, execute, terminate, edit, delete, schedule',
+            'CrontabModule' => 'list, toggleSchedule, terminate, edit, delete, schedule',
         ],
         [
             'access' => 'admin',

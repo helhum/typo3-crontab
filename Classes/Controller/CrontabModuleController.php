@@ -64,15 +64,6 @@ class CrontabModuleController extends ActionController
         $this->redirect('list');
     }
 
-    public function executeAction(string $identifier): void
-    {
-        $this->processManager->runIsolated($identifier);
-
-        $this->addFlashMessage(sprintf('Executed task "%s"', $identifier));
-
-        $this->redirect('list');
-    }
-
     public function terminateAction(string $identifier): void
     {
         $this->processManager->terminate($identifier);
