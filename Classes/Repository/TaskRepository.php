@@ -14,7 +14,7 @@ class TaskRepository
 
     public function __construct(array $taskConfiguration = null)
     {
-        $this->taskConfiguration = $taskConfiguration ?? $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['crontab'];
+        $this->taskConfiguration = $taskConfiguration ?? $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['crontab'] ?? [];
     }
 
     public function getGroupedTasks(): array
