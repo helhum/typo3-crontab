@@ -66,7 +66,8 @@ class CrontabModuleController extends ActionController
 
     public function terminateAction(string $identifier): void
     {
-        $this->processManager->terminate($identifier);
+        $taskDefinition = $this->taskRepository->findByIdentifier($identifier);
+        $this->processManager->terminate($taskDefinition);
 
         $this->addFlashMessage(sprintf('Terminated processes for task "%s"', $identifier));
 
