@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab\Task;
 
+use Helhum\TYPO3\Crontab\Error\ConfigurationValidationFailed;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
@@ -116,14 +117,20 @@ class TaskDefinition
 
     private static function createTask(array $options): ?AbstractTask
     {
-        $className = $options['className'] ?? null;
-        if ($className === null || !\in_array(AbstractTask::class, class_parents($className), true)) {
+        if (empty($options['className'])) {
             return null;
         }
+        $className = $options['className'];
+        if (empty($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][$className])) {
+            throw new ConfigurationValidationFailed(sprintf('Class "%s" is not a registered scheduler task.', $className), 1552511749);
+        }
+        if (!\class_exists($className) || !\in_array(AbstractTask::class, class_parents($className), true)) {
+            throw new ConfigurationValidationFailed(sprintf('Class "%s" does not inherit from scheduler AbstractTask', $className), 1552511788);
+        }
+        $registeredTaskConfig = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][$className];
         $arguments = $options['arguments'] ?? [];
         /** @var AbstractTask $task */
         $task = GeneralUtility::makeInstance($className);
-        $registeredTaskConfig = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][get_class($task)] ?? [];
         $provider = $registeredTaskConfig['additionalFields'] ?? null;
         if ($provider !== null) {
             GeneralUtility::makeInstance($provider)->saveAdditionalFields($arguments, $task);
