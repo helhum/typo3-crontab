@@ -85,12 +85,6 @@ class ProcessManager implements LoggerAwareInterface
             return 0;
         }
 
-        // Re-schedule for next execution if it was scheduled before
-        // TODO: Should we rather throw an exception here?
-        if ($this->crontab->isScheduled($taskDefinition)) {
-            $this->crontab->schedule($taskDefinition);
-        }
-
         $process = $this->start($taskDefinition);
         $this->logger->info(sprintf('Starting task "%s" in process with id "%d".', $taskIdentifier, $process->getId()));
 
@@ -102,6 +96,11 @@ class ProcessManager implements LoggerAwareInterface
             throw $e;
         } finally {
             $this->finish($process);
+            // Re-schedule for next execution if it was scheduled before
+            // TODO: Should we rather throw an exception here?
+            if ($this->crontab->isScheduled($taskDefinition)) {
+                $this->crontab->schedule($taskDefinition);
+            }
         }
         if (!$success) {
             $this->logger->error(sprintf('Task "%s" did not complete successfully.', $taskIdentifier));
