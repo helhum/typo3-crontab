@@ -21,12 +21,6 @@
         "typo3/cms-scheduler": "~9.5.0",
         "helhum/typo3-console": "^5.6.0"
     },
-    "conflict": {
-        "typo3/cms": "*"
-    },
-    "replace": {
-        "crontab": "*"
-    },
     "extra": {
         "typo3/cms": {
             "extension-key": "crontab"
