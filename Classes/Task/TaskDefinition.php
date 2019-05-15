@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab\Task;
 
+use Cron\CronExpression;
 use Helhum\TYPO3\Crontab\Error\ConfigurationValidationFailed;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
@@ -29,9 +30,9 @@ class TaskDefinition
      */
     private $allowMultipleExecutions;
     /**
-     * @var CronSchedule
+     * @var CronExpression
      */
-    private $cronSchedule;
+    private $cronExpression;
     /**
      * @var array
      */
@@ -43,7 +44,7 @@ class TaskDefinition
         string $additionalInformation,
         string $description,
         bool $allowMultipleExecutions,
-        CronSchedule $cronSchedule,
+        CronExpression $cronExpression,
         ProcessDefinition $processDefinition
     ) {
         $this->identifier = $identifier;
@@ -51,7 +52,7 @@ class TaskDefinition
         $this->additionalInformation = $additionalInformation;
         $this->description = $description;
         $this->allowMultipleExecutions = $allowMultipleExecutions;
-        $this->cronSchedule = $cronSchedule;
+        $this->cronExpression = $cronExpression;
         $this->processDefinition = $processDefinition;
     }
 
@@ -65,7 +66,7 @@ class TaskDefinition
             $config['additionalInformation'] ?? ($task !== null ? $task->getAdditionalInformation() : ''),
             $config['description'] ?? '',
             $config['multiple'] ?? false,
-            new CronSchedule($config['cron'] ?? ''),
+            CronExpression::factory($config['cron'] ?? ''),
             new ProcessDefinition($identifier, $config['process'] ?? [])
         );
     }
@@ -97,12 +98,12 @@ class TaskDefinition
 
     public function getCrontabExpression(): string
     {
-        return (string)$this->cronSchedule;
+        return (string)$this->cronExpression->getExpression();
     }
 
     public function getNextDueExecution(): \DateTimeImmutable
     {
-        return $this->cronSchedule->getNextDueExecution();
+        return \DateTimeImmutable::createFromMutable($this->cronExpression->getNextRunDate());
     }
 
     public function createProcess(int $processId): Process
