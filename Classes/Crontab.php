@@ -26,10 +26,19 @@ class Crontab
         $this->connection = $connection ?? GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(self::scheduledTable);
     }
 
-    public function schedule(TaskDefinition $definition, \DateTimeInterface $executionTime = null): void
+    public function schedule(TaskDefinition $definition): void
+    {
+        $this->addToSchedule($definition, $definition->getNextDueExecution());
+    }
+
+    public function scheduleForImmediateExecution(TaskDefinition $definition): void
+    {
+        $this->addToSchedule($definition, new \DateTime());
+    }
+
+    private function addToSchedule(TaskDefinition $definition, \DateTimeInterface $executionTime): void
     {
         $identifier = $definition->getIdentifier();
-        $executionTime = $executionTime ?? $definition->getNextDueExecution();
         $fields = [
             'next_execution' => $executionTime->getTimestamp(),
         ];

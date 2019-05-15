@@ -7,7 +7,7 @@
         'Module',
         'after:BeuserTxBeuser',
         [
-            'CrontabModule' => 'list, toggleSchedule, terminate, edit, delete, schedule',
+            'CrontabModule' => 'list, toggleSchedule, terminate, edit, delete, scheduleForImmediateExecution',
         ],
         [
             'access' => 'admin',

@@ -12,7 +12,7 @@
 	<f:if condition="{groupedTasks}">
 		<f:else><f:be.infobox state="-1" message="{f:translate(key: 'msg.noTasks')}" /></f:else>
 		<f:then>
-			<f:form action="schedule" method="post">
+			<f:form action="scheduleForImmediateExecution" method="post">
 			<f:for each="{groupedTasks}" as="tasks" key="groupName" iteration="groupIterator">
 				<div class="tx_scheduler_mod1_table">
 					<div class="panel panel-space panel-default recordlist">
@@ -140,12 +140,12 @@
 														<f:else>
 															<f:if condition="{isScheduled}">
 																<f:then>
-																	<a class="btn btn-default" data-toggle="tooltip" data-container="body" title="{f:translate(key:'action.run_task_cron')}" href="{f:uri.action(action: 'schedule', arguments: '{identifiers: {0: task.identifier}}')}">
+																	<a class="btn btn-default" data-toggle="tooltip" data-container="body" title="{f:translate(key:'action.run_task_cron')}" href="{f:uri.action(action: 'scheduleForImmediateExecution', arguments: '{identifiers: {0: task.identifier}}')}">
 																		<core:icon identifier="extensions-scheduler-run-task-cron"/>
 																	</a>
 																</f:then>
 																<f:else>
-																	<a class="btn btn-default t3js-modal-trigger" data-toggle="tooltip" data-container="body" data-severity="warning" data-title="{f:translate(key:'msg.scheduleUnscheduledTitle', arguments: '{task: task.identifier}')}" data-button-close-text="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:cancel')}" data-content="{f:translate(key:'msg.scheduleUnscheduled', arguments: '{task: task.identifier}')}" title="{f:translate(key:'action.run_task_cron')}" href="{f:uri.action(action: 'schedule', arguments: '{identifiers: {0: task.identifier}}')}">
+																	<a class="btn btn-default t3js-modal-trigger" data-toggle="tooltip" data-container="body" data-severity="warning" data-title="{f:translate(key:'msg.scheduleUnscheduledTitle', arguments: '{task: task.identifier}')}" data-button-close-text="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:cancel')}" data-content="{f:translate(key:'msg.scheduleUnscheduled', arguments: '{task: task.identifier}')}" title="{f:translate(key:'action.run_task_cron')}" href="{f:uri.action(action: 'scheduleForImmediateExecution', arguments: '{identifiers: {0: task.identifier}}')}">
 																		<core:icon identifier="extensions-scheduler-run-task-cron"/>
 																	</a>
 																</f:else>
