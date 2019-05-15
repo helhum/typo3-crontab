@@ -77,25 +77,28 @@ class Crontab
         return \DateTimeImmutable::createFromMutable($nextExecution);
     }
 
-    public function dueTasks(): \Generator
+    public function dueTasks(int $timeout): \Generator
     {
-        $statement = $this->connection->select(
-            ['identifier', 'next_execution'],
-            self::scheduledTable,
-            [],
-            [],
-            ['next_execution' => 'ASC']
-        );
-        while ($scheduleInformation = $statement->fetch()) {
-            if ($scheduleInformation['next_execution'] > time()) {
-                break;
+        $runUntil = time() + $timeout;
+        do {
+            $statement = $this->connection->select(
+                ['identifier', 'next_execution'],
+                self::scheduledTable,
+                [],
+                [],
+                ['next_execution' => 'ASC']
+            );
+            while ($scheduleInformation = $statement->fetch()) {
+                if ($scheduleInformation['next_execution'] > time()) {
+                    break;
+                }
+                if (!$this->taskRepository->hasTask($scheduleInformation['identifier'])) {
+                    $this->removeFromScheduledTable($scheduleInformation['identifier']);
+                    continue;
+                }
+                yield $scheduleInformation['identifier'];
             }
-            if (!$this->taskRepository->hasTask($scheduleInformation['identifier'])) {
-                $this->removeFromScheduledTable($scheduleInformation['identifier']);
-                continue;
-            }
-            yield $scheduleInformation['identifier'];
-        }
+        } while (time() < $runUntil);
     }
 
     private function removeFromScheduledTable(string $identifier): void
