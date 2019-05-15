@@ -36,11 +36,26 @@
 			<trans-unit id="label.nextRun">
 				<source>Next scheduled run</source>
 			</trans-unit>
+			<trans-unit id="label.cronjobSelected">
+				<source>Schedule selected tasks</source>
+			</trans-unit>
 			<trans-unit id="label.checkAll">
 				<source>Check/uncheck all</source>
 			</trans-unit>
+			<trans-unit id="action.run_task_cron">
+				<source>Execute on next cron job run.</source>
+			</trans-unit>
 			<trans-unit id="msg.noTasks">
 				<source>No tasks defined yet.</source>
+			</trans-unit>
+			<trans-unit id="msg.delete">
+				<source>Are you sure you want to delete task "%s".</source>
+			</trans-unit>
+			<trans-unit id="msg.scheduleUnscheduledTitle">
+				<source>Schedule task "%s"?</source>
+			</trans-unit>
+			<trans-unit id="msg.scheduleUnscheduled">
+				<source>Are you sure you want to schedule task "%s", which currently is not scheduled?. This will cause the task to be scheduled for regular execution.</source>
 			</trans-unit>
 			<trans-unit id="msg.serverTime">
 				<source>Current server time is %s.</source>
