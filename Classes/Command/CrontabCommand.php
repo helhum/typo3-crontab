@@ -9,6 +9,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class CrontabCommand extends Command
 {
@@ -19,7 +20,7 @@ class CrontabCommand extends Command
     {
         $this
             ->setDescription('Start Crontab from the command line.')
-            ->setHelp('Loops through all pending scheduled commands and executes them')
+            ->setHelp('Loops through all pending scheduled tasks and executes them')
             ->addOption(
                 'timeout',
                 '-t',
@@ -30,7 +31,7 @@ class CrontabCommand extends Command
     }
 
     /**
-     * Execute crontab commands
+     * Execute crontab tasks
      *
      * @param InputInterface $input
      * @param OutputInterface $output
@@ -40,7 +41,7 @@ class CrontabCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $crontab = new Crontab();
+        $crontab = GeneralUtility::makeInstance(Crontab::class);
         $commandDispatcher = CommandDispatcher::createFromCommandRun();
         foreach ($crontab->dueTasks((int)$input->getOption('timeout')) as $taskIdentifier) {
             try {
