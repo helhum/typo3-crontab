@@ -98,6 +98,7 @@ class CrontabScheduleCommand extends Command
         foreach ($input->getOption('group') as $groupName) {
             if (empty($groupedTasks[$groupName])) {
                 $output->writeln(sprintf('<error>No group named "%s" is configured.</error>', $groupName));
+
                 return 1;
             }
             foreach ($groupedTasks[$groupName] as $taskDefinition) {
@@ -125,6 +126,7 @@ class CrontabScheduleCommand extends Command
         foreach ($input->getOption('group') as $groupName) {
             if (empty($groupedTasks[$groupName])) {
                 $output->writeln(sprintf('<error>No group named "%s" is configured.</error>', $groupName));
+
                 return 1;
             }
             foreach ($groupedTasks[$groupName] as $taskDefinition) {
