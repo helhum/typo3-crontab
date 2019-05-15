@@ -9,6 +9,9 @@
 <f:section name="Content">
 	<h1><f:translate key="crontab"/></h1>
 	<div class="tx_scheduler_mod1">
+	<f:if condition="{groupedTasks}">
+		<f:else><f:be.infobox state="-1" message="{f:translate(key: 'msg.noTasks')}" /></f:else>
+	</f:if>
 	<f:for each="{groupedTasks}" as="tasks" key="groupName" iteration="groupIterator">
 		<div class="tx_scheduler_mod1_table">
 			<div class="panel panel-space panel-default recordlist">

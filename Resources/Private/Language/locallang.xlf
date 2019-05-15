@@ -39,6 +39,9 @@
 			<trans-unit id="label.checkAll">
 				<source>Check/uncheck all</source>
 			</trans-unit>
+			<trans-unit id="msg.noTasks">
+				<source>No tasks defined yet.</source>
+			</trans-unit>
 			<trans-unit id="msg.serverTime">
 				<source>Current server time is %s.</source>
 			</trans-unit>
