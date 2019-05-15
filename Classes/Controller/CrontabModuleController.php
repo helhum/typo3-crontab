@@ -60,7 +60,7 @@ class CrontabModuleController extends ActionController
     {
         foreach ($identifiers as $identifier) {
             $taskDefinition = $this->taskRepository->findByIdentifier($identifier);
-            $this->crontab->schedule($taskDefinition);
+            $this->crontab->schedule($taskDefinition, new \DateTimeImmutable());
         }
 
         $this->redirect('list');
