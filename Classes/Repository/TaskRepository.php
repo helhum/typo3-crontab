@@ -17,6 +17,19 @@ class TaskRepository
         $this->taskConfiguration = $taskConfiguration ?? $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['crontab'] ?? [];
     }
 
+    /**
+     * @return TaskDefinition[]
+     */
+    public function findAll(): array
+    {
+        return array_map(
+            function (string $identifier) {
+                return TaskDefinition::createFromConfig($identifier, $this->taskConfiguration[$identifier]);
+            },
+            array_keys($this->taskConfiguration)
+        );
+    }
+
     public function getGroupedTasks(): array
     {
         $groupedTasks = [];

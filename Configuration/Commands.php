@@ -13,4 +13,7 @@ return [
     'crontab:execute' => [
         'class' => \Helhum\TYPO3\Crontab\Command\CrontabProcessCommand::class,
     ],
+    'crontab:schedule' => [
+        'class' => \Helhum\TYPO3\Crontab\Command\CrontabScheduleCommand::class,
+    ],
 ];
