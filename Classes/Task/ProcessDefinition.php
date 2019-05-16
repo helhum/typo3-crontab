@@ -8,6 +8,7 @@ class ProcessDefinition
      * @var string
      */
     private $taskIdentifier;
+
     /**
      * @var array
      */
@@ -30,7 +31,7 @@ class ProcessDefinition
         return $process;
     }
 
-    private function validate(array $options)
+    private function validate(array $options): bool
     {
         // TODO
         return true;

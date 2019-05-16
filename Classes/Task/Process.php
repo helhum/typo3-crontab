@@ -15,6 +15,4 @@ interface Process
     public function getId(): int;
 
     public function run(Application $application, InputInterface $input = null, OutputInterface $output = null): bool;
-
-    public function getProgress(): float;
 }

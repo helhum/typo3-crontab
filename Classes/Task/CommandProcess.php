@@ -56,9 +56,4 @@ class CommandProcess implements Process
 
         return $application->run(new ArgvInput($argv), $output) === 0;
     }
-
-    public function getProgress(): float
-    {
-        return 0.0;
-    }
 }

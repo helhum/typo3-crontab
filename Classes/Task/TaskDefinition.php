@@ -5,6 +5,7 @@ namespace Helhum\TYPO3\Crontab\Task;
 use Cron\CronExpression;
 use Helhum\TYPO3\Crontab\Error\ConfigurationValidationFailed;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Scheduler\ProgressProviderInterface;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
 class TaskDefinition
@@ -13,47 +14,60 @@ class TaskDefinition
      * @var string
      */
     private $identifier;
+
     /**
      * @var string
      */
     private $title;
+
     /**
      * @var string
      */
     private $additionalInformation;
+
     /**
      * @var string
      */
     private $description;
+
     /**
      * @var bool
      */
     private $allowMultipleExecutions;
+
     /**
      * @var CronExpression
      */
     private $cronExpression;
+
     /**
-     * @var array
+     * @var ProcessDefinition
      */
     private $processDefinition;
 
+    /**
+     * @var AbstractTask|null
+     */
+    private $schedulerTask;
+
     public function __construct(
         string $identifier,
-        string $title,
-        string $additionalInformation,
+        ?string $title,
+        ?string $additionalInformation,
         string $description,
         bool $allowMultipleExecutions,
         CronExpression $cronExpression,
-        ProcessDefinition $processDefinition
+        ProcessDefinition $processDefinition,
+        ?AbstractTask $schedulerTask
     ) {
         $this->identifier = $identifier;
-        $this->title = $title;
-        $this->additionalInformation = $additionalInformation;
+        $this->title = $title ?? ($schedulerTask === null ? $identifier : $schedulerTask->getTaskTitle());
+        $this->additionalInformation = $additionalInformation ?? ($schedulerTask === null ? '' : $schedulerTask->getAdditionalInformation());;
         $this->description = $description;
         $this->allowMultipleExecutions = $allowMultipleExecutions;
         $this->cronExpression = $cronExpression;
         $this->processDefinition = $processDefinition;
+        $this->schedulerTask = $schedulerTask;
     }
 
     public static function createFromConfig(string $identifier, array $config): self
@@ -62,12 +76,13 @@ class TaskDefinition
 
         return new self(
             $identifier,
-            $config['title'] ?? ($task !== null ? $task->getTaskTitle() : $identifier),
-            $config['additionalInformation'] ?? ($task !== null ? $task->getAdditionalInformation() : ''),
+            $config['title'] ?? null,
+            $config['additionalInformation'] ?? null,
             $config['description'] ?? '',
             $config['multiple'] ?? false,
             CronExpression::factory($config['cron'] ?? ''),
-            new ProcessDefinition($identifier, $config['process'] ?? [])
+            new ProcessDefinition($identifier, $config['process'] ?? []),
+            $task
         );
     }
 
@@ -113,7 +128,11 @@ class TaskDefinition
 
     public function getProgress(): float
     {
-        return $this->processDefinition->createProcess(0)->getProgress();
+        if (!$this->schedulerTask instanceof ProgressProviderInterface) {
+            return 0.0;
+        }
+
+        return $this->schedulerTask->getProgress();
     }
 
     private static function createTask(array $options): ?AbstractTask

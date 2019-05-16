@@ -51,16 +51,6 @@ class SchedulerTaskProcess implements Process
         return $this->createTask()->execute();
     }
 
-    public function getProgress(): float
-    {
-        $task = $this->createTask();
-        if (!$task instanceof ProgressProviderInterface) {
-            return 0.0;
-        }
-
-        return $task->getProgress();
-    }
-
     private function createTask(): AbstractTask
     {
         $className = $this->options['className'];
