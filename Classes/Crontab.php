@@ -105,6 +105,7 @@ class Crontab
                     $this->removeFromScheduledTable($scheduleInformation['identifier']);
                     continue;
                 }
+                $this->schedule($this->taskRepository->findByIdentifier($scheduleInformation['identifier']));
                 yield $scheduleInformation['identifier'];
             }
         } while (time() < $runUntil);

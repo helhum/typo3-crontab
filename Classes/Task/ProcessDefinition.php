@@ -2,38 +2,60 @@
 declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab\Task;
 
+use Helhum\TYPO3\Crontab\Error\ConfigurationValidationFailed;
+
 class ProcessDefinition
 {
     /**
-     * @var string
+     * @var TaskExecutor
      */
-    private $taskIdentifier;
+    private $executor;
 
-    /**
-     * @var array
-     */
-    private $processDefinitionConfig;
-
-    public function __construct(string $taskIdentifier, array $processDefinitionConfig)
+    public function __construct(array $config)
     {
-        $this->taskIdentifier = $taskIdentifier;
-        $this->processDefinitionConfig = $processDefinitionConfig;
+        $this->validate($config);
+        $this->executor = $this->createExecutor($config);
     }
 
-    public function createProcess(int $processId): Process
+    public function getExecutor(): TaskExecutor
     {
-        if ($this->processDefinitionConfig['type'] === 'command') {
-            $process = CommandProcess::create($this->taskIdentifier, $this->processDefinitionConfig, $processId);
-        } elseif ($this->processDefinitionConfig['type'] === 'scheduler') {
-            $process = SchedulerTaskProcess::create($this->taskIdentifier, $this->processDefinitionConfig, $processId);
+        return $this->executor;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->executor->getTitle();
+    }
+
+    public function getAdditionalInformation(): ?string
+    {
+        return $this->executor->getAdditionalInformation();
+    }
+
+    public function getProgress(): float
+    {
+        return $this->executor->getProgress();
+    }
+
+    private function createExecutor(array $config): TaskExecutor
+    {
+        if ($config['type'] === 'command') {
+            return CommandExecutor::create($config);
+        }
+        if ($config['type'] === 'scheduler') {
+            return SchedulerTaskExecutor::create($config);
         }
 
-        return $process;
+        throw new ConfigurationValidationFailed('Task type must be "command" or "scheduler"', 1558097793);
     }
 
-    private function validate(array $options): bool
+    private function validate(array $config): void
     {
-        // TODO
-        return true;
+        if (empty($config['type'])) {
+            throw new ConfigurationValidationFailed('Task type must not be empty', 1558097917);
+        }
+        if ($config['type'] !== 'command' && $config['type'] !== 'scheduler') {
+            throw new ConfigurationValidationFailed('Task type must be "command" or "scheduler"', 1558097974);
+        }
     }
 }

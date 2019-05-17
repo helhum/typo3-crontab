@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab\Controller;
 
 use Helhum\TYPO3\Crontab\Crontab;
-use Helhum\TYPO3\Crontab\ProcessManager;
+use Helhum\TYPO3\Crontab\Process\ProcessManager;
 use Helhum\TYPO3\Crontab\Repository\TaskRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -14,10 +14,12 @@ class CrontabModuleController extends ActionController
      * @var TaskRepository
      */
     private $taskRepository;
+
     /**
      * @var Crontab
      */
     private $crontab;
+
     /**
      * @var ProcessManager
      */
@@ -27,7 +29,7 @@ class CrontabModuleController extends ActionController
     {
         $this->taskRepository = $taskRepository;
         $this->crontab = $crontab;
-        $this->processManager = $processManager ?? GeneralUtility::makeInstance(ProcessManager::class, $crontab);
+        $this->processManager = $processManager ?? GeneralUtility::makeInstance(ProcessManager::class, 1);
         parent::__construct();
     }
 
@@ -69,9 +71,7 @@ class CrontabModuleController extends ActionController
 
     public function terminateAction(string $identifier): void
     {
-        $taskDefinition = $this->taskRepository->findByIdentifier($identifier);
-        $this->processManager->terminate($taskDefinition);
-
+        $this->processManager->terminateAllProcesses($identifier);
         $this->addFlashMessage(sprintf('Terminated processes for task "%s"', $identifier));
 
         $this->redirect('list');

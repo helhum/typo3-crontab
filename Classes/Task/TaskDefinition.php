@@ -3,10 +3,6 @@ declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab\Task;
 
 use Cron\CronExpression;
-use Helhum\TYPO3\Crontab\Error\ConfigurationValidationFailed;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Scheduler\ProgressProviderInterface;
-use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
 class TaskDefinition
 {
@@ -45,11 +41,6 @@ class TaskDefinition
      */
     private $processDefinition;
 
-    /**
-     * @var AbstractTask|null
-     */
-    private $schedulerTask;
-
     public function __construct(
         string $identifier,
         ?string $title,
@@ -57,23 +48,19 @@ class TaskDefinition
         string $description,
         bool $allowMultipleExecutions,
         CronExpression $cronExpression,
-        ProcessDefinition $processDefinition,
-        ?AbstractTask $schedulerTask
+        ProcessDefinition $processDefinition
     ) {
         $this->identifier = $identifier;
-        $this->title = $title ?? ($schedulerTask === null ? $identifier : $schedulerTask->getTaskTitle());
-        $this->additionalInformation = $additionalInformation ?? ($schedulerTask === null ? '' : $schedulerTask->getAdditionalInformation());;
+        $this->title = $title ?? $processDefinition->getTitle() ?? $identifier;
+        $this->additionalInformation = $additionalInformation ?? $processDefinition->getAdditionalInformation() ?? '';
         $this->description = $description;
         $this->allowMultipleExecutions = $allowMultipleExecutions;
         $this->cronExpression = $cronExpression;
         $this->processDefinition = $processDefinition;
-        $this->schedulerTask = $schedulerTask;
     }
 
     public static function createFromConfig(string $identifier, array $config): self
     {
-        $task = self::createTask($config['process'] ?? []);
-
         return new self(
             $identifier,
             $config['title'] ?? null,
@@ -81,8 +68,7 @@ class TaskDefinition
             $config['description'] ?? '',
             $config['multiple'] ?? false,
             CronExpression::factory($config['cron'] ?? ''),
-            new ProcessDefinition($identifier, $config['process'] ?? []),
-            $task
+            new ProcessDefinition($config['process'] ?? [])
         );
     }
 
@@ -121,41 +107,13 @@ class TaskDefinition
         return \DateTimeImmutable::createFromMutable($this->cronExpression->getNextRunDate());
     }
 
-    public function createProcess(int $processId): Process
+    public function getProcessDefinition(): ProcessDefinition
     {
-        return $this->processDefinition->createProcess($processId);
+        return $this->processDefinition;
     }
 
     public function getProgress(): float
     {
-        if (!$this->schedulerTask instanceof ProgressProviderInterface) {
-            return 0.0;
-        }
-
-        return $this->schedulerTask->getProgress();
-    }
-
-    private static function createTask(array $options): ?AbstractTask
-    {
-        if (empty($options['className'])) {
-            return null;
-        }
-        $className = $options['className'];
-        if (empty($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][$className])) {
-            throw new ConfigurationValidationFailed(sprintf('Class "%s" is not a registered scheduler task.', $className), 1552511749);
-        }
-        if (!\class_exists($className) || !\in_array(AbstractTask::class, class_parents($className), true)) {
-            throw new ConfigurationValidationFailed(sprintf('Class "%s" does not inherit from scheduler AbstractTask', $className), 1552511788);
-        }
-        $registeredTaskConfig = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][$className];
-        $arguments = $options['arguments'] ?? [];
-        /** @var AbstractTask $task */
-        $task = GeneralUtility::makeInstance($className);
-        $provider = $registeredTaskConfig['additionalFields'] ?? null;
-        if ($provider !== null) {
-            GeneralUtility::makeInstance($provider)->saveAdditionalFields($arguments, $task);
-        }
-
-        return $task;
+        return $this->processDefinition->getProgress();
     }
 }

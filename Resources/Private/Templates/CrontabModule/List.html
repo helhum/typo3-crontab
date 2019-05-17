@@ -39,7 +39,7 @@
 								</thead>
 								<tbody>
 								<f:for each="{tasks}" as="task" iteration="taskIterator">
-									<f:alias map="{isRunning: '{c:expression(expr: \'processManager.isRunning(task)\')}', isScheduled: '{c:expression(expr: \'crontab.isScheduled(task)\')}'}">
+									<f:alias map="{isRunning: '{c:expression(expr: \'processManager.hasRunningProcesses(task.getIdentifier())\')}', isScheduled: '{c:expression(expr: \'crontab.isScheduled(task)\')}'}">
 									<tr class="taskGroup_{groupIterator.index}">
 										<td>
 											<span class="t-span"><label class="btn btn-default btn-checkbox">

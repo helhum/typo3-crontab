@@ -8,41 +8,21 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CommandProcess implements Process
+class CommandExecutor implements TaskExecutor
 {
-    /**
-     * @var string
-     */
-    private $identifier;
     /**
      * @var array
      */
     private $options;
-    /**
-     * @var int
-     */
-    private $processId;
 
-    public function __construct(string $identifier, array $options, int $processId)
+    public function __construct(array $options)
     {
-        $this->identifier = $identifier;
         $this->options = $options;
-        $this->processId = $processId;
     }
 
-    public function getTaskIdentifier(): string
+    public static function create(array $options): TaskExecutor
     {
-        return $this->identifier;
-    }
-
-    public function getId(): int
-    {
-        return $this->processId;
-    }
-
-    public static function create(string $identifier, array $options, int $processId): Process
-    {
-        return new self($identifier, $options, $processId);
+        return new self($options);
     }
 
     public function run(Application $application, InputInterface $input = null, OutputInterface $output = null): bool
@@ -55,5 +35,20 @@ class CommandProcess implements Process
         $output = $output ?? new NullOutput();
 
         return $application->run(new ArgvInput($argv), $output) === 0;
+    }
+
+    public function getTitle(): ?string
+    {
+        return null;
+    }
+
+    public function getAdditionalInformation(): ?string
+    {
+        return null;
+    }
+
+    public function getProgress(): float
+    {
+        return 0.0;
     }
 }
