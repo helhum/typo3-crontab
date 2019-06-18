@@ -34,7 +34,7 @@
 				<source>Allow parallel execution</source>
 			</trans-unit>
 			<trans-unit id="label.nextRun">
-				<source>Next scheduled run</source>
+				<source>Next run</source>
 			</trans-unit>
 			<trans-unit id="label.cronjobSelected">
 				<source>Schedule selected tasks</source>
@@ -50,12 +50,6 @@
 			</trans-unit>
 			<trans-unit id="msg.delete">
 				<source>Are you sure you want to delete task "%s".</source>
-			</trans-unit>
-			<trans-unit id="msg.scheduleUnscheduledTitle">
-				<source>Schedule task "%s"?</source>
-			</trans-unit>
-			<trans-unit id="msg.scheduleUnscheduled">
-				<source>Are you sure you want to schedule task "%s", which currently is not scheduled?. This will cause the task to be scheduled for regular execution.</source>
 			</trans-unit>
 			<trans-unit id="msg.serverTime">
 				<source>Current server time is %s.</source>
@@ -75,11 +69,23 @@
 			<trans-unit id="status.late">
 				<source>late</source>
 			</trans-unit>
+			<trans-unit id="status.singleRun">
+				<source>single</source>
+			</trans-unit>
+			<trans-unit id="status.singleRun.description">
+				<source>Will run only once on next execution</source>
+			</trans-unit>
 			<trans-unit id="status.late.description">
-				<source>Scheduled, will run on next possible execution</source>
+				<source>Scheduled, will run on next execution</source>
 			</trans-unit>
 			<trans-unit id="label.stop">
 				<source>Stop task "%s"</source>
+			</trans-unit>
+			<trans-unit id="label.schedule">
+				<source>Enable scheduling for task "%s"</source>
+			</trans-unit>
+			<trans-unit id="label.removeFromSchedule">
+				<source>Disable scheduling for task "%s"</source>
 			</trans-unit>
 			<trans-unit id="msg.stop">
 				<source>Are you sure you want to terminate all running processes for task "%s"?.</source>

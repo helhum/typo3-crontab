@@ -39,7 +39,7 @@
 								</thead>
 								<tbody>
 								<f:for each="{tasks}" as="task" iteration="taskIterator">
-									<f:alias map="{isRunning: '{c:expression(expr: \'processManager.hasRunningProcesses(task.getIdentifier())\')}', isScheduled: '{c:expression(expr: \'crontab.isScheduled(task)\')}'}">
+									<f:alias map="{isRunning: '{c:expression(expr: \'processManager.hasRunningProcesses(task.getIdentifier())\')}', isScheduled: '{c:expression(expr: \'crontab.isScheduled(task)\')}', willRun: '{c:expression(expr: \'crontab.willRun(task)\')}'}">
 									<tr class="taskGroup_{groupIterator.index}">
 										<td>
 											<span class="t-span"><label class="btn btn-default btn-checkbox">
@@ -52,7 +52,10 @@
 												<f:if condition="{c:expression(expr: '!isRunning && isScheduled && crontab.nextExecution(task) < now')}">
 													<span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-warning pull-right" title="{f:translate(key: 'status.late.description')}"><f:translate key="status.late"/></span>
 												</f:if>
-												<f:if condition="!{isScheduled} && !{isRunning}">
+												<f:if condition="{c:expression(expr: '!isRunning && willRun && !isScheduled')}">
+													<span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-warning pull-right" title="{f:translate(key: 'status.singleRun.description')}"><f:translate key="status.singleRun"/></span>
+												</f:if>
+												<f:if condition="!{willRun} && !{isScheduled} && !{isRunning}">
 													<span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-default pull-right"><f:translate key="status.disabled"/></span>
 												</f:if>
 												<f:if condition="{isRunning}">
@@ -84,9 +87,9 @@
 											</f:if>
 										</span></td>
 										<td><span class="t-span">
-											<f:if condition="{isScheduled} && !{isRunning}">
-												<f:then><f:format.date format="Y-m-d H:i">{c:expression(expr: 'crontab.nextExecution(task)')}</f:format.date></f:then>
+											<f:if condition="({willRun} || {isScheduled}) && !{isRunning}">
 												<f:else>-</f:else>
+												<f:then><f:format.date format="Y-m-d H:i">{c:expression(expr: 'crontab.nextExecution(task)')}</f:format.date></f:then>
 											</f:if>
 										</span></td>
 										<td class="nowrap">
@@ -95,7 +98,12 @@
 													<a data-toggle="tooltip" data-container="body" class="btn btn-default" href="{f:uri.action(action: 'edit', arguments: '{identifier: task.identifier}')}" title="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
 														<core:icon identifier="actions-open"/>
 													</a>
-													<a data-toggle="tooltip" data-container="body" class="btn btn-default" href="{f:uri.action(action: 'toggleSchedule', arguments: '{identifier: task.identifier}')}" title="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:{taskRecord.translationKey}')}">
+													<a data-toggle="tooltip"
+													   data-container="body"
+													   class="btn btn-default"
+													   href="{f:uri.action(action: 'toggleSchedule', arguments: '{identifier: task.identifier}')}"
+													   title="{f:translate(key:'{f:if(condition: \'{isScheduled}\', then: \'label.removeFromSchedule\', else: \'label.schedule\')}', arguments: '{identifier: task.identifier}')}"
+													>
 														<f:if condition="{isScheduled}">
 															<f:then>
 																<core:icon identifier="actions-edit-hide"/>
@@ -138,18 +146,9 @@
 															</div>
 														</f:then>
 														<f:else>
-															<f:if condition="{isScheduled}">
-																<f:then>
-																	<a class="btn btn-default" data-toggle="tooltip" data-container="body" title="{f:translate(key:'action.run_task_cron')}" href="{f:uri.action(action: 'scheduleForImmediateExecution', arguments: '{identifiers: {0: task.identifier}}')}">
-																		<core:icon identifier="extensions-scheduler-run-task-cron"/>
-																	</a>
-																</f:then>
-																<f:else>
-																	<a class="btn btn-default t3js-modal-trigger" data-toggle="tooltip" data-container="body" data-severity="warning" data-title="{f:translate(key:'msg.scheduleUnscheduledTitle', arguments: '{task: task.identifier}')}" data-button-close-text="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:cancel')}" data-content="{f:translate(key:'msg.scheduleUnscheduled', arguments: '{task: task.identifier}')}" title="{f:translate(key:'action.run_task_cron')}" href="{f:uri.action(action: 'scheduleForImmediateExecution', arguments: '{identifiers: {0: task.identifier}}')}">
-																		<core:icon identifier="extensions-scheduler-run-task-cron"/>
-																	</a>
-																</f:else>
-															</f:if>
+															<a class="btn btn-default" data-toggle="tooltip" data-container="body" title="{f:translate(key:'action.run_task_cron')}" href="{f:uri.action(action: 'scheduleForImmediateExecution', arguments: '{identifiers: {0: task.identifier}}')}">
+																<core:icon identifier="extensions-scheduler-run-task-cron"/>
+															</a>
 														</f:else>
 													</f:if>
 												</div>

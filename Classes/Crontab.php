@@ -28,21 +28,24 @@ class Crontab
 
     public function schedule(TaskDefinition $definition): void
     {
-        $this->addToSchedule($definition, $definition->getNextDueExecution());
+        $this->addToSchedule($definition, $definition->getNextDueExecution(), false);
     }
 
     public function scheduleForImmediateExecution(TaskDefinition $definition): void
     {
-        $this->addToSchedule($definition, new \DateTime());
+        $this->addToSchedule($definition, new \DateTime(), true);
     }
 
-    private function addToSchedule(TaskDefinition $definition, \DateTimeInterface $executionTime): void
+    private function addToSchedule(TaskDefinition $definition, \DateTimeInterface $executionTime, bool $singleRun): void
     {
         $identifier = $definition->getIdentifier();
         $fields = [
             'next_execution' => $executionTime->getTimestamp(),
         ];
-        if (!$this->isScheduled($definition)) {
+        if ($singleRun === true && $this->isScheduled($definition)) {
+            $singleRun = false;
+        }
+        if (!$this->willRun($definition)) {
             $fields['identifier'] = $identifier;
             $this->connection->insert(
                 self::scheduledTable,
@@ -50,6 +53,7 @@ class Crontab
             );
         }
 
+        $fields['single_run'] = (int)$singleRun;
         $this->connection->update(
             self::scheduledTable,
             $fields,
@@ -63,6 +67,20 @@ class Crontab
     }
 
     public function isScheduled(TaskDefinition $definition): bool
+    {
+        $identifier = $definition->getIdentifier();
+
+        return $this->connection->count(
+            'identifier',
+            self::scheduledTable,
+            [
+                'identifier' => $identifier,
+                'single_run' => 0,
+            ]
+        ) > 0;
+    }
+
+    public function willRun(TaskDefinition $definition): bool
     {
         $identifier = $definition->getIdentifier();
 
@@ -91,11 +109,14 @@ class Crontab
         $runUntil = time() + $timeout;
         do {
             $statement = $this->connection->select(
-                ['identifier', 'next_execution'],
+                ['identifier', 'next_execution', 'single_run'],
                 self::scheduledTable,
                 [],
                 [],
-                ['next_execution' => 'ASC']
+                [
+                    'single_run' => 'DESC',
+                    'next_execution' => 'ASC',
+                ]
             );
             while ($scheduleInformation = $statement->fetch()) {
                 if ($scheduleInformation['next_execution'] > time()) {
@@ -105,7 +126,11 @@ class Crontab
                     $this->removeFromScheduledTable($scheduleInformation['identifier']);
                     continue;
                 }
-                $this->schedule($this->taskRepository->findByIdentifier($scheduleInformation['identifier']));
+                if ($scheduleInformation['single_run']) {
+                    $this->removeFromScheduledTable($scheduleInformation['identifier']);
+                } else {
+                    $this->schedule($this->taskRepository->findByIdentifier($scheduleInformation['identifier']));
+                }
                 yield $scheduleInformation['identifier'];
             }
         } while (time() < $runUntil);
