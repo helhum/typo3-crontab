@@ -4,22 +4,21 @@
 
 This package is made with the intention to at some point replace the current functionality
 in TYPO3 scheduler extension. 
-It is in very early development stage. Testing and feedback is highly appreciated, but using it
-in production systems is at your own risk.
-Especially the process handling, needs to be checked in more systems environments for reliability and security.
-Conceptual and breaking changes may happen any time on the master branch, so make sure you lock your
-dependencies properly.
+It is in very early development stage, which means that not all features (especially UI wise) 
+are implemented yet.
+Also currently this package does not work in Windows environments, as no POSIX functions (`posix_getpgid`) are available
+in this environment.
+
+Testing and feedback is highly appreciated, but (as always) properly test the extension before relying on it for production use.
 
 ## Current state
 
 * There is no user interface for adding tasks or removing tasks. You have to provide the configuration manually.
-* The scheduler extension is a requirement, as some assets and PHP classes are re-used.
-* You therefore have two backend modules looking very similar currently when installing this extension.
 * TYPO3 Console is a hard requirement
 * TYPO3 >=9.5.0 is a hard requirement. This may change later on in the development process (allowing TYPO3 8.7).
 * The extension only comes for composer installation. TYPO3 in non composer mode is currently not supported.
 * The command to execute scheduled tasks is `crontab:run`
-* start times, end times and single execution for scheduled tasks do not exist yet
+* start times, end times for scheduled tasks do not exist and likely will never be implemented
 
 ## Concepts (especially in relation to TYPO3 scheduler)
 
@@ -32,16 +31,13 @@ Whether it makes sense to do schedule certain commands, is up to you to decide.
 
 ### Just a crontab
 Just like with a Unix crontab, there is no possibility for defining start or end time or for setting a unit of work to only execute once.
-Only regularly scheduled execution will be supported.
 
-While it is currently implemented to trigger executions of tasks in the UI, it will likely to be changed so that
-triggering execution in the backend directly will be removed in favor of just scheduling it for background execution.
-
-It is possible to configure commands to be scheduled, but temporarily remove them from regular scheduled executions.
+It is possible to configure commands to be scheduled, but remove them from regular scheduled executions.
 Similar to adding commands to your crontab but commenting them out, so that they are ignored.
 
 Such commands will appear in the UI as "disabled".
-On first deployment on a target system all configured commands are disabled and must be enabled to be scheduled. 
+On first deployment on a target system all configured commands are disabled and must be enabled to be scheduled,
+either through the UI, or by using the `crontab:schedule` command. 
 
 ## Security considerations
 Since conceptually it is possible to execute any TYPO3 Console command, it becomes pretty clear, users with access to this module
