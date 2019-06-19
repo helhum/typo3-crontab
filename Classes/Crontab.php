@@ -104,36 +104,33 @@ class Crontab
         return \DateTimeImmutable::createFromMutable($nextExecution);
     }
 
-    public function dueTasks(int $timeout): \Generator
+    public function dueTasks(): \Generator
     {
-        $runUntil = time() + $timeout;
-        do {
-            $statement = $this->connection->select(
-                ['identifier', 'next_execution', 'single_run'],
-                self::scheduledTable,
-                [],
-                [],
-                [
-                    'single_run' => 'DESC',
-                    'next_execution' => 'ASC',
-                ]
-            );
-            while ($scheduleInformation = $statement->fetch()) {
-                if ($scheduleInformation['next_execution'] > time()) {
-                    break;
-                }
-                if (!$this->taskRepository->hasTask($scheduleInformation['identifier'])) {
-                    $this->removeFromScheduledTable($scheduleInformation['identifier']);
-                    continue;
-                }
-                if ($scheduleInformation['single_run']) {
-                    $this->removeFromScheduledTable($scheduleInformation['identifier']);
-                } else {
-                    $this->schedule($this->taskRepository->findByIdentifier($scheduleInformation['identifier']));
-                }
-                yield $scheduleInformation['identifier'];
+        $statement = $this->connection->select(
+            ['identifier', 'next_execution', 'single_run'],
+            self::scheduledTable,
+            [],
+            [],
+            [
+                'single_run' => 'DESC',
+                'next_execution' => 'ASC',
+            ]
+        );
+        while ($scheduleInformation = $statement->fetch()) {
+            if ($scheduleInformation['next_execution'] > time()) {
+                break;
             }
-        } while (time() < $runUntil);
+            if (!$this->taskRepository->hasTask($scheduleInformation['identifier'])) {
+                $this->removeFromScheduledTable($scheduleInformation['identifier']);
+                continue;
+            }
+            if ($scheduleInformation['single_run']) {
+                $this->removeFromScheduledTable($scheduleInformation['identifier']);
+            } else {
+                $this->schedule($this->taskRepository->findByIdentifier($scheduleInformation['identifier']));
+            }
+            yield $scheduleInformation['identifier'];
+        }
     }
 
     private function removeFromScheduledTable(string $identifier): void

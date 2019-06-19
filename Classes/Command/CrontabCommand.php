@@ -58,11 +58,16 @@ class CrontabCommand extends Command
             $processManager = GeneralUtility::makeInstance(ProcessManager::class, (int)$input->getOption('forks'));
             $output->writeln('<info>Executing scheduled tasks…</info>');
             $taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
-            foreach ($crontab->dueTasks((int)$input->getOption('timeout')) as $taskIdentifier) {
-                $processManager->add(
-                    TaskProcess::createFromTaskDefinition($taskRepository->findByIdentifier($taskIdentifier))
-                );
-            }
+            $runUntil = time() + $input->getOption('timeout');
+            do {
+                foreach ($crontab->dueTasks() as $taskIdentifier) {
+                    $processManager->add(
+                        TaskProcess::createFromTaskDefinition($taskRepository->findByIdentifier($taskIdentifier))
+                    );
+                }
+                $processManager->wait();
+                usleep(10000);
+            } while (time() < $runUntil);
             $processManager->finish();
             $lock->release();
             $output->writeln('<info>done.</info>');

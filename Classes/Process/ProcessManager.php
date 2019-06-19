@@ -53,7 +53,7 @@ class ProcessManager implements LoggerAwareInterface
     {
         $this->updateStatus();
         while ($this->processes->count() >= $this->forks) {
-            usleep(1000);
+            usleep(10000);
             $this->updateStatus();
         }
     }
