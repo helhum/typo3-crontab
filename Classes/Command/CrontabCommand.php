@@ -37,7 +37,7 @@ class CrontabCommand extends Command
                 'forks',
                 '-f',
                 InputOption::VALUE_REQUIRED,
-                'Number of sub processes allowed to be run in parallel',
+                'Number of tasks allowed to be run in parallel',
                 1
             );
     }

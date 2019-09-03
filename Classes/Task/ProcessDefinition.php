@@ -45,8 +45,11 @@ class ProcessDefinition
         if ($config['type'] === 'scheduler') {
             return SchedulerTaskExecutor::create($config);
         }
+        if ($config['type'] === 'script') {
+            return ScriptExecutor::create($config);
+        }
 
-        throw new ConfigurationValidationFailed('Task type must be "command" or "scheduler"', 1558097793);
+        throw new ConfigurationValidationFailed('Task type must be "command", "scheduler" or "script"', 1558097793);
     }
 
     private function validate(array $config): void
@@ -54,8 +57,8 @@ class ProcessDefinition
         if (empty($config['type'])) {
             throw new ConfigurationValidationFailed('Task type must not be empty', 1558097917);
         }
-        if ($config['type'] !== 'command' && $config['type'] !== 'scheduler') {
-            throw new ConfigurationValidationFailed('Task type must be "command" or "scheduler"', 1558097974);
+        if ($config['type'] !== 'command' && $config['type'] !== 'scheduler' && $config['type'] !== 'script') {
+            throw new ConfigurationValidationFailed('Task type must be "command", "scheduler" or "script"', 1558097974);
         }
     }
 }

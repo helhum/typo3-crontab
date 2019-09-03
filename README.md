@@ -22,11 +22,11 @@ Testing and feedback is highly appreciated, but (as always) properly test the ex
 
 ## Concepts (especially in relation to TYPO3 scheduler)
 
-### Everything is a command
+### Everything is a command or script
 The main purpose of this extension is to execute different units of work as background task on a regular schedule.
-Similar to Unix crontab, a unit of work is limited to be a console command. To provide backwards compatibility,
+Similar to Unix crontab, a unit of work is limited to be a TYPO3 Console command or shell script. To provide backwards compatibility,
 Scheduler tasks are wrapped into a special command, so that they can be used as unit of work, too.
-It also means that, every command that is available as command in TYPO3 Console, will be a valid unit of work to be scheduled.
+So every command that is available as command in TYPO3 Console and every shell script, will be a valid unit of work to be scheduled.
 Whether it makes sense to do schedule certain commands, is up to you to decide.
 
 ### Just a crontab
@@ -68,6 +68,28 @@ EXTCONF:
                 arguments:
                     - '--quiet'
                     - '--no-interaction'
+        shell_script:
+            group: 'Demo'
+            multiple: false
+            title: 'Executing a shell script'
+            description: 'Path relative to composer root or absolute'
+            cron: '*/12 * * * *'
+            process:
+                type: script
+                script: res/scripts/test.sh
+                arguments:
+                    - 'foo'
+        php_script:
+            group: 'Demo'
+            multiple: false
+            title: 'Executing a php script'
+            description: '"@php" placeholder can be used to reference the PHP binary used by the crontab:run command'
+            cron: '*/42 * * * *'
+            process:
+                type: script
+                script: '@php res/scripts/test.php'
+                arguments:
+                    - 'bar'
         test:
             group: 'Demo'
             multiple: true
