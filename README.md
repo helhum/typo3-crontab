@@ -16,9 +16,15 @@ Testing and feedback is highly appreciated, but (as always) properly test the ex
 * There is no user interface for adding tasks or removing tasks. You have to provide the configuration manually.
 * TYPO3 Console is a hard requirement
 * TYPO3 >=9.5.0 is a hard requirement. This may change later on in the development process (allowing TYPO3 8.7).
-* The extension only comes for composer installation. TYPO3 in non composer mode is currently not supported.
+* The extension only comes for Composer installation. TYPO3 in non Composer mode is not supported.
 * The command to execute scheduled tasks is `crontab:run`
-* start times, end times for scheduled tasks do not exist and likely will never be implemented
+* The `crontab:run` command accepts the option `--timeout` with which you can specify the time in seconds the command will run, 
+executing tasks or waiting for tasks to be executed. 
+* The `crontab:run` command accepts the option `--forks` with which you can specify how many tasks are allowed to be run
+in parallel. This is especially useful in combination with `--timeout` and long running tasks, so that while one task is running,
+additional tasks can run as well.
+* start times, end times for scheduled tasks do not exist. If you have such requirement, 
+you could build some automation around the `crontab:schedule` command to automate enabling/disabling tasks at appropriate times.
 
 ## Concepts (especially in relation to TYPO3 scheduler)
 
