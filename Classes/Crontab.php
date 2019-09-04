@@ -126,8 +126,6 @@ class Crontab
             }
             if ($scheduleInformation['single_run']) {
                 $this->removeFromScheduledTable($scheduleInformation['identifier']);
-            } else {
-                $this->schedule($this->taskRepository->findByIdentifier($scheduleInformation['identifier']));
             }
             yield $scheduleInformation['identifier'];
         }

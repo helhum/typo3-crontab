@@ -2,6 +2,9 @@
 declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab\Process;
 
+use Helhum\TYPO3\Crontab\Event\Event;
+use Helhum\TYPO3\Crontab\Event\ProcessFinished;
+use Helhum\TYPO3\Crontab\Event\ProcessStarted;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\Connection;
@@ -28,6 +31,11 @@ class ProcessManager implements LoggerAwareInterface
      * @var Connection
      */
     private $databaseConnection;
+
+    /**
+     * @var array
+     */
+    private $listeners;
 
     public function __construct(int $forks, Connection $databaseConnection = null)
     {
@@ -62,13 +70,16 @@ class ProcessManager implements LoggerAwareInterface
     {
         foreach ($this->processes as $process) {
             if (!$this->isProcessRunning($process)) {
-                if (!$process->isSuccessful()) {
-                    $this->logger->error(sprintf('Failed to successfully execute task "%s" process with pid "%d".', $process->getTaskIdentifier(), $process->getFormerPid()));
-                } else {
-                    $this->logger->info(sprintf('Task "%s" process with pid "%d" finished successfully.', $process->getTaskIdentifier(), $process->getFormerPid()));
-                }
                 $this->removeFromRunningTable($process->getTaskIdentifier(), $process->getFormerPid());
                 $this->processes->detach($process);
+                $finishedEvent = new ProcessFinished($process->getTaskIdentifier(), $process->isSuccessful());
+                if ($finishedEvent->hasFinishedSuccessfully()) {
+                    $this->logger->info(sprintf('Task "%s" process with pid "%d" finished successfully.', $process->getTaskIdentifier(), $process->getFormerPid()));
+                    $this->dispatchEvent($finishedEvent);
+                    continue;
+                }
+                $this->logger->error(sprintf('Failed to successfully execute task "%s" process with pid "%d".', $process->getTaskIdentifier(), $process->getFormerPid()));
+                $this->dispatchEvent($finishedEvent);
             }
         }
     }
@@ -143,11 +154,25 @@ class ProcessManager implements LoggerAwareInterface
         return $isRunning;
     }
 
+    public function addListener(string $name, \Closure $listener): void
+    {
+        $this->listeners[$name][] = $listener;
+    }
+
+    private function dispatchEvent(Event $event): void
+    {
+        $listeners = $this->listeners[get_class($event)] ?? [];
+        foreach ($listeners as $listener) {
+            $listener($event);
+        }
+    }
+
     private function startProcess(TaskProcess $subProcess): void
     {
         $subProcess->start();
         $this->logger->info(sprintf('Starting task "%s" process with pid "%d".', $subProcess->getTaskIdentifier(), $subProcess->getPid()));
         $this->addToRunningTable($subProcess->getTaskIdentifier(), $subProcess->getPid());
+        $this->dispatchEvent(new ProcessStarted($subProcess->getTaskIdentifier()));
     }
 
     private function removeFromRunningTable(string $identifier, int $pid): void

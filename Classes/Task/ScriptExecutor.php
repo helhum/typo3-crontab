@@ -27,7 +27,7 @@ class ScriptExecutor implements TaskExecutor
 
     public function run(Application $application, InputInterface $input = null, OutputInterface $output = null): bool
     {
-        $command = str_replace('@php ', '', $this->options['script']);;
+        $command = str_replace('@php ', '', $this->options['script']);
         $arguments = $this->options['arguments'] ?? [];
         $commandLine = $arguments;
         array_unshift($commandLine, $command);

@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab\Command;
 
 use Helhum\TYPO3\Crontab\Crontab;
-use Helhum\TYPO3\Crontab\Error\ThereIsAnotherOne;
+use Helhum\TYPO3\Crontab\Event\ProcessFinished;
 use Helhum\TYPO3\Crontab\Process\ProcessManager;
 use Helhum\TYPO3\Crontab\Process\TaskProcess;
 use Helhum\TYPO3\Crontab\Repository\TaskRepository;
@@ -52,12 +52,24 @@ class CrontabCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $lock = GeneralUtility::makeInstance(LockFactory::class)->createLocker('crontab_process_manager', LockingStrategyInterface::LOCK_CAPABILITY_EXCLUSIVE | LockingStrategyInterface::LOCK_CAPABILITY_NOBLOCK);
+        $output->writeln('<info>Executing scheduled tasks…</info>');
+
         try {
             $lock->acquire(LockingStrategyInterface::LOCK_CAPABILITY_EXCLUSIVE | LockingStrategyInterface::LOCK_CAPABILITY_NOBLOCK);
-            $crontab = GeneralUtility::makeInstance(Crontab::class);
-            $processManager = GeneralUtility::makeInstance(ProcessManager::class, (int)$input->getOption('forks'));
-            $output->writeln('<info>Executing scheduled tasks…</info>');
             $taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
+            $crontab = GeneralUtility::makeInstance(Crontab::class, $taskRepository);
+            $processManager = GeneralUtility::makeInstance(ProcessManager::class, (int)$input->getOption('forks'));
+
+            $processManager->addListener(
+                ProcessFinished::class,
+                function (ProcessFinished $event) use ($crontab, $taskRepository) {
+                    $taskDefinition = $taskRepository->findByIdentifier($event->getTaskIdentifier());
+                    if ($crontab->isScheduled($taskDefinition)) {
+                        $crontab->schedule($taskDefinition);
+                    }
+                }
+            );
+
             $runUntil = time() + $input->getOption('timeout');
             do {
                 foreach ($crontab->dueTasks() as $taskIdentifier) {
