@@ -34,7 +34,12 @@ class Crontab
             ProcessFinished::class,
             function (ProcessFinished $event) {
                 $taskDefinition = $this->taskRepository->findByIdentifier($event->getTaskIdentifier());
-                if ($this->isScheduled($taskDefinition)) {
+                if (!$this->isScheduled($taskDefinition)) {
+                    return;
+                }
+                if ($taskDefinition->shouldRetryOnFailure() && !$event->hasFinishedSuccessfully()) {
+                    $this->scheduleForImmediateExecution($taskDefinition);
+                } else {
                     $this->schedule($taskDefinition);
                 }
             }

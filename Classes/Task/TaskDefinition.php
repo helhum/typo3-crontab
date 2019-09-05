@@ -41,12 +41,18 @@ class TaskDefinition
      */
     private $processDefinition;
 
-    public function __construct(
+    /**
+     * @var bool
+     */
+    private $retryOnFailure;
+
+    private function __construct(
         string $identifier,
         ?string $title,
         ?string $additionalInformation,
         string $description,
         bool $allowMultipleExecutions,
+        bool $retryOnFailure,
         CronExpression $cronExpression,
         ProcessDefinition $processDefinition
     ) {
@@ -55,6 +61,7 @@ class TaskDefinition
         $this->additionalInformation = $additionalInformation ?? $processDefinition->getAdditionalInformation() ?? '';
         $this->description = $description;
         $this->allowMultipleExecutions = $allowMultipleExecutions;
+        $this->retryOnFailure = $retryOnFailure;
         $this->cronExpression = $cronExpression;
         $this->processDefinition = $processDefinition;
     }
@@ -67,6 +74,7 @@ class TaskDefinition
             $config['additionalInformation'] ?? null,
             $config['description'] ?? '',
             $config['multiple'] ?? false,
+            $config['retryOnFailure'] ?? false,
             CronExpression::factory($config['cron'] ?? ''),
             new ProcessDefinition($config['process'] ?? [])
         );
@@ -95,6 +103,11 @@ class TaskDefinition
     public function allowsMultipleExecutions(): bool
     {
         return $this->allowMultipleExecutions;
+    }
+
+    public function shouldRetryOnFailure(): bool
+    {
+        return $this->retryOnFailure;
     }
 
     public function getCrontabExpression(): string

@@ -67,8 +67,8 @@ class CrontabCommand extends Command
                         TaskProcess::createFromTaskDefinition($taskRepository->findByIdentifier($taskIdentifier))
                     );
                 }
+                // Monitor processes to finish and wait for free spot
                 $processManager->wait();
-                usleep(10000);
             } while (time() < $runUntil);
             $processManager->finish();
             $lock->release();

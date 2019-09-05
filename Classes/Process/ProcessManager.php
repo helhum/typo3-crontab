@@ -61,7 +61,6 @@ class ProcessManager implements LoggerAwareInterface
     {
         $this->updateStatus();
         while ($this->processes->count() >= $this->forks) {
-            usleep(10000);
             $this->updateStatus();
         }
     }
@@ -90,6 +89,7 @@ class ProcessManager implements LoggerAwareInterface
                 $this->processes->detach($process);
             }
         }
+        usleep(10000);
     }
 
     private function shouldProcessBeStopped(TaskProcess $process): bool
