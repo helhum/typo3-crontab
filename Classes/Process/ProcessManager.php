@@ -69,7 +69,8 @@ class ProcessManager implements LoggerAwareInterface
     private function updateStatus(): void
     {
         foreach ($this->processes as $process) {
-            if (!$this->isProcessRunning($process)) {
+            $isRunning = $process->isRunning();
+            if (!$isRunning) {
                 $this->removeFromRunningTable($process->getTaskIdentifier(), $process->getFormerPid());
                 $this->processes->detach($process);
                 $finishedEvent = new ProcessFinished($process->getTaskIdentifier(), $process->isSuccessful());
@@ -81,14 +82,18 @@ class ProcessManager implements LoggerAwareInterface
                 $this->logger->error(sprintf('Failed to successfully execute task "%s" process with pid "%d".', $process->getTaskIdentifier(), $process->getFormerPid()));
                 $this->dispatchEvent($finishedEvent);
             }
+            if ($isRunning && $this->shouldProcessBeStopped($process)) {
+                // Process is running, but was removed from our tracking table, which means termination was requested
+                // so we're going to stop the task here.
+                $process->stop();
+                $this->logger->info(sprintf('Task "%s" process with pid "%d" has been terminated.', $process->getTaskIdentifier(), $process->getFormerPid()));
+                $this->processes->detach($process);
+            }
         }
     }
 
-    private function isProcessRunning(TaskProcess $process): bool
+    private function shouldProcessBeStopped(TaskProcess $process): bool
     {
-        if (!$process->isRunning()) {
-            return false;
-        }
         $pid = $process->getPid() ?? $process->getFormerPid();
         $trackedCount = $this->databaseConnection->count(
             'process_id',
@@ -98,15 +103,8 @@ class ProcessManager implements LoggerAwareInterface
                 'process_id' => $pid,
             ]
         );
-        if ($trackedCount === 0) {
-            // Process is running, but as removed from our tracking table, which means termination was requested
-            // so we're going to stop the task here.
-            $process->stop();
 
-            return false;
-        }
-
-        return true;
+        return $trackedCount === 0;
     }
 
     public function finish(): void
@@ -127,7 +125,7 @@ class ProcessManager implements LoggerAwareInterface
             $processId = (int)$row['process_id'];
             $this->logger->info(sprintf('Terminating task "%s" process with pid "%d".', $taskIdentifier, $processId));
             // We're only removing it from our process tracking table and let the parent process
-            // deal with terminating the process (see self::isProcessRunning)
+            // deal with terminating the process (see self::shouldProcessBeStopped)
             $this->removeFromRunningTable($taskIdentifier, $processId);
         }
     }
