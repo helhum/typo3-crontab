@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab;
 
+use Helhum\TYPO3\Crontab\Event\ProcessFinished;
+use Helhum\TYPO3\Crontab\Process\ProcessManager;
 use Helhum\TYPO3\Crontab\Repository\TaskRepository;
 use Helhum\TYPO3\Crontab\Task\TaskDefinition;
 use TYPO3\CMS\Core\Database\Connection;
@@ -26,6 +28,19 @@ class Crontab
         $this->connection = $connection ?? GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(self::scheduledTable);
     }
 
+    public function prepareSchedulingFinishedTasks(ProcessManager $processManager): void
+    {
+        $processManager->addListener(
+            ProcessFinished::class,
+            function (ProcessFinished $event) {
+                $taskDefinition = $this->taskRepository->findByIdentifier($event->getTaskIdentifier());
+                if ($this->isScheduled($taskDefinition)) {
+                    $this->schedule($taskDefinition);
+                }
+            }
+        );
+    }
+
     public function schedule(TaskDefinition $definition): void
     {
         $this->addToSchedule($definition, $definition->getNextDueExecution(), false);
@@ -33,7 +48,7 @@ class Crontab
 
     public function scheduleForImmediateExecution(TaskDefinition $definition): void
     {
-        $this->addToSchedule($definition, new \DateTime(), true);
+        $this->addToSchedule($definition, new \DateTimeImmutable(), true);
     }
 
     private function addToSchedule(TaskDefinition $definition, \DateTimeInterface $executionTime, bool $singleRun): void
