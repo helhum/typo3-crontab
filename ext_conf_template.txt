@@ -1,2 +1,2 @@
-# cat=basic//; type=string; label=Hide scheduler module
+# cat=basic//; type=boolean; label=Hide scheduler module
 hideSchedulerModule = 1
