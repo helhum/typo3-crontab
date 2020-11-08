@@ -37,7 +37,6 @@ class TaskProcess extends Process
     {
         $this->task = $task;
         parent::__construct($commandLine, null, $environmentVars, null, null);
-        $this->inheritEnvironmentVariables();
     }
 
     public static function createFromTaskDefinition(TaskDefinition $task): self
