@@ -24,8 +24,8 @@
     "require": {
         "dragonmantank/cron-expression": "^2.3",
         "helhum/typo3-console": "^6",
-        "typo3/cms-core": "~9.5.0 || ~10.4.0",
-        "typo3/cms-extbase": "~9.5.0 || ~10.4.0"
+        "typo3/cms-core": "~10.4.0",
+        "typo3/cms-extbase": "~10.4.0"
     },
     "suggest": {
         "typo3/cms-scheduler": "To be able to execute TYPO3 scheduler tasks"
