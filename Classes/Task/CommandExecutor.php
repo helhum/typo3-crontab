@@ -44,7 +44,12 @@ class CommandExecutor implements TaskExecutor
 
     public function getAdditionalInformation(): ?string
     {
-        return null;
+        $additionalInformation = $this->options['command'];
+        if (!empty($this->options['arguments'])) {
+            $additionalInformation .= ' "' . implode('","', $this->options['arguments']) . '"';
+        }
+
+        return $additionalInformation;
     }
 
     public function getProgress(): float
