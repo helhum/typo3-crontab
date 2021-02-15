@@ -39,7 +39,7 @@ class CommandExecutor implements TaskExecutor
 
     public function getTitle(): ?string
     {
-        return null;
+        return 'Execute console command';
     }
 
     public function getAdditionalInformation(): ?string
