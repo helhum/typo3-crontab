@@ -14,9 +14,10 @@
 /**
  * Module: TYPO3/CMS/Crontab/Scheduler
  */
-define(['jquery',
+define([
+    'jquery',
     'TYPO3/CMS/Backend/SplitButtons',
-    'datatables'
+    'tablesort'
 ], function ($, SplitButtons) {
 
     /**
@@ -157,10 +158,7 @@ define(['jquery',
             Scheduler.toggleTaskGroups($(this));
         });
 
-        $('table.taskGroup-table').DataTable({
-            "paging": false,
-            "searching": false
-        });
+        new Tablesort($('table.taskGroup-table').get(0));
     };
 
     /**
