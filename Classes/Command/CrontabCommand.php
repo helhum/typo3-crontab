@@ -30,14 +30,12 @@ class CrontabCommand extends Command
                 '-t',
                 InputOption::VALUE_REQUIRED,
                 'Loops and runs due tasks until timeout (in seconds) is reached. Default is to look for due tasks and then quit.',
-                0
             )
             ->addOption(
                 'forks',
                 '-f',
                 InputOption::VALUE_REQUIRED,
-                'Number of tasks allowed to be run in parallel',
-                1
+                'Number of due tasks allowed to be run in parallel',
             );
     }
 
@@ -55,12 +53,14 @@ class CrontabCommand extends Command
         try {
             $lock->acquire(LockingStrategyInterface::LOCK_CAPABILITY_EXCLUSIVE | LockingStrategyInterface::LOCK_CAPABILITY_NOBLOCK);
             $output->writeln('<info>Executing scheduled tasks…</info>');
+            $defaultWorkerTimeout = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['crontab']['workerTimeout'] ?? 0;
+            $defaultWorkerForks = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['crontab']['workerForks'] ?? 1;
             $taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
             $crontab = GeneralUtility::makeInstance(Crontab::class, $taskRepository);
-            $processManager = GeneralUtility::makeInstance(ProcessManager::class, (int)$input->getOption('forks'));
+            $processManager = GeneralUtility::makeInstance(ProcessManager::class, (int)($input->getOption('forks') ?? $defaultWorkerForks));
             $crontab->prepareSchedulingFinishedTasks($processManager);
 
-            $runUntil = time() + $input->getOption('timeout');
+            $runUntil = time() + (int)($input->getOption('timeout') ?? $defaultWorkerTimeout);
             do {
                 foreach ($crontab->dueTasks() as $taskIdentifier) {
                     $processManager->add(

@@ -1,2 +1,6 @@
 # cat=basic//; type=boolean; label=Hide scheduler module
 hideSchedulerModule = 1
+# cat=basic//; type=integer; label=Default timeout. Loops and runs due tasks until timeout (in seconds) is reached. Default is to look for due tasks and then quit.
+workerTimeout = 0
+# cat=basic//; type=integer; label=Default number of due tasks allowed to be run in parallel.
+workerForks = 1
