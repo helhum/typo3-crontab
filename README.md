@@ -11,7 +11,7 @@ which are required to check whether the processes are actually running.
 
 ## Key features
 * Tasks are configured via configuration, thus are deployable as code
-* Any TYPO3 Console command and any shell script can be added as task
+* Besides regular Scheduler tasks, any TYPO3 Console command and any shell script can be added as task
 * Whether a task is show as running in the UI, always reflects the real state of the process. 
 No more marking tasks not running in case they crash with an error.
 * Stopping a task via the UI actually stops the process, instead of just marking it as not running.
