@@ -2,7 +2,7 @@
     "name": "helhum/typo3-crontab",
     "type": "typo3-cms-extension",
     "description": "Advanced scheduling for TYPO3 Console commands and TYPO3 Scheduler tasks",
-    "homepage": "https://typo3.org",
+    "homepage": "https://github.com/helhum/typo3-crontab",
     "license": [
         "GPL-2.0-or-later"
     ],
@@ -15,17 +15,14 @@
     ],
     "config": {
         "sort-packages": true,
-        "preferred-install": {
-            "*": "dist"
-        },
         "vendor-dir": ".Build/vendor",
         "bin-dir": ".Build/bin"
     },
     "require": {
         "dragonmantank/cron-expression": "^2.3",
         "helhum/typo3-console": "^6",
-        "typo3/cms-core": "~10.4.0",
-        "typo3/cms-extbase": "~10.4.0"
+        "typo3/cms-core": "^10.4.23",
+        "typo3/cms-extbase": "^10.4.23"
     },
     "suggest": {
         "typo3/cms-scheduler": "To be able to execute TYPO3 scheduler tasks"

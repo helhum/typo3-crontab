@@ -2,22 +2,22 @@
 
 ## Disclaimer
 
-This package is made with the intention to at some point maybe replace the current functionality
+This package is made with the intention to, at some point, replace the current functionality
 of TYPO3 scheduler extension. 
 It is in early development stage, which means that not all features (especially UI wise) 
-are implemented yet, but the implemented functionality is know to work reliably.
-Currently this package does not work in Windows environments, as no POSIX functions (`posix_getpgid`) are available,
+are implemented yet, but the implemented functionality is known to work reliably.
+This package currently does not work in Windows environments, as no POSIX functions (`posix_getpgid`) are available,
 which are required to check whether the processes are actually running.
 
 ## Key features
-* Tasks are configured via configuration, thus are deployable as code
-* Besides regular Scheduler tasks, any TYPO3 Console command and any shell script can be added as task
-* Whether a task is show as running in the UI, always reflects the real state of the process. 
+* Tasks are configured via configuration, thus are deployable as code.
+* In addition to regular Scheduler tasks, any TYPO3 Console command and any shell script can be added as task.
+* Whether a task is shown as running in the UI, always reflects the real state of the process. 
 No more marking tasks not running in case they crash with an error.
 * Stopping a task via the UI actually stops the process, instead of just marking it as not running.
 * The crontab command (`crontab:run`) to execute the scheduled tasks can optionally be a long running process,
 constantly looking for tasks to be executed (the option `--timeout`) and allows parallel execution of
-of different due tasks (the option `--forks`)
+of different due tasks (the option `--forks`).
 * Tasks can be configured to be re-scheduled for immediate execution in case they failed.
 
 ## Installation
