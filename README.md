@@ -107,7 +107,6 @@ EXTCONF:
 
 * There is no user interface for adding tasks or removing tasks. You have to provide the configuration manually.
 * TYPO3 Console is a hard requirement
-* TYPO3 9.5.x is a hard requirement. This may change later on in the development process (allowing TYPO3 8.7).
 * The extension only comes for Composer installations. TYPO3 in non Composer mode is not supported.
 * start times, end times for scheduled tasks do not exist. If you have such requirement,
 * The command to execute scheduled tasks is `crontab:run`
