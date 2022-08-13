@@ -1,22 +1,22 @@
 <html
-	xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-	xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
-	data-namespace-typo3-fluid="true">
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+    data-namespace-typo3-fluid="true">
 
 <be:moduleLayout>
-	<f:be.pageRenderer
-		includeRequireJsModules="{
-			0:'TYPO3/CMS/Crontab/Scheduler',
-			1:'TYPO3/CMS/Backend/DateTimePicker',
-			2:'TYPO3/CMS/Backend/Tooltip',
-			3:'TYPO3/CMS/Backend/Modal'
-		}"
-	/>
+    <f:be.pageRenderer
+        includeRequireJsModules="{
+            0:'TYPO3/CMS/Crontab/Scheduler',
+            1:'TYPO3/CMS/Backend/DateTimePicker',
+            2:'TYPO3/CMS/Backend/Tooltip',
+            3:'TYPO3/CMS/Backend/Modal'
+        }"
+    />
 
-	<be:moduleLayout.button.shortcutButton displayName="{f:translate(id: shortcutLabel)}" />
+    <be:moduleLayout.button.shortcutButton displayName="{f:translate(id: shortcutLabel)}" />
 
-	<f:render section="Content" />
-	<f:render partial="ServerTime" arguments="{now: now}" />
+    <f:render section="Content" />
+    <f:render partial="ServerTime" arguments="{now: now}" />
 
 </be:moduleLayout>
 

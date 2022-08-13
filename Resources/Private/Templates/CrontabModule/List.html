@@ -1,177 +1,177 @@
 <html
-	xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-	xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
-	xmlns:c="http://typo3.org/ns/Helhum/TYPO3/Crontab/ViewHelpers"
-	data-namespace-typo3-fluid="true">
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+    xmlns:c="http://typo3.org/ns/Helhum/TYPO3/Crontab/ViewHelpers"
+    data-namespace-typo3-fluid="true">
 
 <f:layout name="Default"/>
 
 <f:section name="Content">
-	<h1><f:translate key="crontab"/></h1>
-	<div class="tx_scheduler_mod1">
-	<f:if condition="{groupedTasks}">
-		<f:else><f:be.infobox state="-1" message="{f:translate(key: 'msg.noTasks')}" /></f:else>
-		<f:then>
-			<f:form action="scheduleForImmediateExecution" method="post">
-			<f:for each="{groupedTasks}" as="tasks" key="groupName" iteration="groupIterator">
-				<div class="tx_scheduler_mod1_table">
-					<div class="panel panel-space panel-default recordlist">
-						<div class="panel-heading taskGroup" data-task-group-id="{groupIterator.index}">
-							<span title="{f:translate(key: 'label.group')}">{groupName}</span> (<span class="t3js-table-total-items" title="{f:translate(key: 'label.group.taskCount')}">{tasks -> f:count()}</span>)
-								<a href="#" class="pull-right t3js-toggle-recordlist" data-table="task-group-{groupIterator.index}" data-toggle="collapse" data-target="#recordlist-task-group-{groupIterator.index}">
-									<span class="caret"></span>
-								</a>
-						</div>
+    <h1><f:translate key="crontab"/></h1>
+    <div class="tx_scheduler_mod1">
+    <f:if condition="{groupedTasks}">
+        <f:else><f:be.infobox state="-1" message="{f:translate(key: 'msg.noTasks')}" /></f:else>
+        <f:then>
+            <f:form action="scheduleForImmediateExecution" method="post">
+            <f:for each="{groupedTasks}" as="tasks" key="groupName" iteration="groupIterator">
+                <div class="tx_scheduler_mod1_table">
+                    <div class="panel panel-space panel-default recordlist">
+                        <div class="panel-heading taskGroup" data-task-group-id="{groupIterator.index}">
+                            <span title="{f:translate(key: 'label.group')}">{groupName}</span> (<span class="t3js-table-total-items" title="{f:translate(key: 'label.group.taskCount')}">{tasks -> f:count()}</span>)
+                                <a href="#" class="pull-right t3js-toggle-recordlist" data-table="task-group-{groupIterator.index}" data-toggle="collapse" data-target="#recordlist-task-group-{groupIterator.index}">
+                                    <span class="caret"></span>
+                                </a>
+                        </div>
 
-						<div class="collapse in" data-state="expanded" id="recordlist-task-group-{groupIterator.index}">
-							<div class="table-fit">
-								<table class="table table-striped table-hover taskGroup-table">
-								<thead>
-									<tr class="taskGroup_{groupIterator.index}">
-										<th><span class="t-span"><a class="btn btn-default checkall" href="#" id="checkall" title="{f:translate(key:'label.checkAll')}"><core:icon identifier="actions-document-select"/></a></span></th>
-										<th><span class="t-span"><f:translate key="label.identifier"/></span></th>
-										<th><span class="t-span"><f:translate key="task"/></span></th>
-										<th><span class="t-span"><f:translate key="label.frequency"/></span></th>
-										<th><span class="t-span"><f:translate key="label.parallel"/></span></th>
-										<th><span class="t-span"><f:translate key="label.nextRun"/></span></th>
-										<th><span class="t-span"></span></th>
-									</tr>
-								</thead>
-								<tbody>
-								<f:for each="{tasks}" as="task" iteration="taskIterator">
-									<f:alias map="{isRunning: '{c:expression(expr: \'processManager.hasRunningProcesses(task.getIdentifier())\')}', isScheduled: '{c:expression(expr: \'crontab.isScheduled(task)\')}', willRun: '{c:expression(expr: \'crontab.willRun(task)\')}'}">
-									<tr class="taskGroup_{groupIterator.index}">
-										<td>
-											<span class="t-span"><label class="btn btn-default btn-checkbox">
-												<f:form.checkbox name="identifiers[]" value="{task.identifier}" id="task_{task.identifier}"/><span class="t3-icon fa"></span>
-											</label></span>
-										</td>
-										<td class="right"><span class="t-span">{task.identifier}</span></td>
-										<td class="nowrap-disabled">
-											<span class="t-span">
-												<f:if condition="{c:expression(expr: '!isRunning && isScheduled && crontab.nextExecution(task) < now')}">
-													<span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-warning pull-right" title="{f:translate(key: 'status.late.description')}"><f:translate key="status.late"/></span>
-												</f:if>
-												<f:if condition="{c:expression(expr: '!isRunning && willRun && !isScheduled')}">
-													<span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-warning pull-right" title="{f:translate(key: 'status.singleRun.description')}"><f:translate key="status.singleRun"/></span>
-												</f:if>
-												<f:if condition="!{willRun} && !{isScheduled} && !{isRunning}">
-													<span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-default pull-right"><f:translate key="status.disabled"/></span>
-												</f:if>
-												<f:if condition="{isRunning}">
-													<span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-danger pull-right"><f:translate key="status.running"/></span>
-												</f:if>
-												<span class="name">
-													<f:link.action action="edit" arguments="{identifier: task.identifier}">
-														{task.title}
-														<f:if condition="{task.additionalInformation}">
-															<div class="additional-information"><f:format.nl2br>{task.additionalInformation}</f:format.nl2br></div>
-														</f:if>
-													</f:link.action>
-												</span>
-												<f:if condition="{task.description}">
-													<span class="text-muted" style="margin-top: 0.5em;"><f:format.nl2br>{task.description}</f:format.nl2br></span>
-												</f:if>
-												<f:if condition="{task.progress}">
-													<div class="progress">
-														<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="{task.progress}" aria-valuemin="0" aria-valuemax="100" style="width: {task.progress}%;">{f:translate(key:'status.progress')}:&nbsp;{task.progress}%</div>
-													</div>
-												</f:if>
-											</span>
-										</td>
-										<td><span class="t-span">{task.crontabExpression}</span></td>
-										<td><span class="t-span">
-											<f:if condition="{c:expression(expr: 'task.allowsMultipleExecutions()')}">
-												<f:then><f:translate key="yes"/></f:then>
-												<f:else><f:translate key="no"/></f:else>
-											</f:if>
-										</span></td>
-										<td><span class="t-span">
-											<f:if condition="({willRun} || {isScheduled}) && !{isRunning}">
-												<f:else>-</f:else>
-												<f:then><f:format.date format="Y-m-d H:i">{c:expression(expr: 'crontab.nextExecution(task)')}</f:format.date></f:then>
-											</f:if>
-										</span></td>
-										<td class="nowrap">
-											<span class="t-span">
-												<div class="btn-group" role="group">
-													<a data-toggle="tooltip" data-container="body" class="btn btn-default" href="{f:uri.action(action: 'edit', arguments: '{identifier: task.identifier}')}" title="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
-														<core:icon identifier="actions-open"/>
-													</a>
-													<a data-toggle="tooltip"
-													   data-container="body"
-													   class="btn btn-default"
-													   href="{f:uri.action(action: 'toggleSchedule', arguments: '{identifier: task.identifier}')}"
-													   title="{f:translate(key:'{f:if(condition: \'{isScheduled}\', then: \'label.removeFromSchedule\', else: \'label.schedule\')}', arguments: '{identifier: task.identifier}')}"
-													>
-														<f:if condition="{isScheduled}">
-															<f:then>
-																<core:icon identifier="actions-edit-hide"/>
-															</f:then>
-															<f:else>
-																<core:icon identifier="actions-edit-unhide"/>
-															</f:else>
-														</f:if>
-													</a>
-													<f:if condition="{isRunning}">
-														<f:then>
-															<span class="btn btn-default disabled">
-																<core:icon identifier="empty-empty"/>
-															</span>
-														</f:then>
-														<f:else>
-															<a data-toggle="tooltip" data-container="body" class="btn btn-default t3js-modal-trigger" href="{f:uri.action(action: 'delete', arguments: '{identifier: task.identifier}')}" data-severity="warning" data-title="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:delete')}" data-button-close-text="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:cancel')}" data-content="{f:translate(key:'msg.delete', arguments: '{task: task.identifier}')}" title="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:delete')}">
-																<core:icon identifier="actions-edit-delete"/>
-															</a>
-														</f:else>
-													</f:if>
-												</div>
-												<div class="btn-group" role="group">
-													<f:if condition="{isRunning}">
-														<f:then>
-															<div class="btn-group" role="group">
-																<a
-																	href="{f:uri.action(action: 'terminate', arguments: '{identifier: task.identifier}')}"
-																	title="{f:translate(key:'label.stop', arguments: '{0: task.identifier}')}"
-																	class="btn btn-default t3js-modal-trigger"
-																	data-toggle="tooltip"
-																	data-container="body"
-																	data-severity="warning"
-																	data-title="{f:translate(key:'label.stop', arguments: '{0: task.identifier}')}"
-																	data-button-close-text="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:cancel')}"
-																	data-content="{f:translate(key:'msg.stop', arguments: '{0: task.identifier}')}"
-																>
-																	<core:icon identifier="actions-close"/>
-																</a>
-															</div>
-														</f:then>
-														<f:else>
-															<a class="btn btn-default" data-toggle="tooltip" data-container="body" title="{f:translate(key:'action.run_task_cron')}" href="{f:uri.action(action: 'scheduleForImmediateExecution', arguments: '{identifiers: {0: task.identifier}}')}">
-																<core:icon identifier="extensions-scheduler-run-task-cron"/>
-															</a>
-														</f:else>
-													</f:if>
-												</div>
-											</span>
-										</td>
-									</tr>
-									</f:alias>
-								</f:for>
-								</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-			</f:for>
-			<button class="btn btn-default" name="go_cron" id="scheduler_executeselected">
-				<core:icon identifier="extensions-scheduler-run-task-cron" />
-				<f:translate key="label.cronjobSelected" />
-			</button>
-			</f:form>
-		</f:then>
-	</f:if>
-	</div>
+                        <div class="collapse in" data-state="expanded" id="recordlist-task-group-{groupIterator.index}">
+                            <div class="table-fit">
+                                <table class="table table-striped table-hover taskGroup-table">
+                                <thead>
+                                    <tr class="taskGroup_{groupIterator.index}">
+                                        <th><span class="t-span"><a class="btn btn-default checkall" href="#" id="checkall" title="{f:translate(key:'label.checkAll')}"><core:icon identifier="actions-document-select"/></a></span></th>
+                                        <th><span class="t-span"><f:translate key="label.identifier"/></span></th>
+                                        <th><span class="t-span"><f:translate key="task"/></span></th>
+                                        <th><span class="t-span"><f:translate key="label.frequency"/></span></th>
+                                        <th><span class="t-span"><f:translate key="label.parallel"/></span></th>
+                                        <th><span class="t-span"><f:translate key="label.nextRun"/></span></th>
+                                        <th><span class="t-span"></span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <f:for each="{tasks}" as="task" iteration="taskIterator">
+                                    <f:alias map="{isRunning: '{c:expression(expr: \'processManager.hasRunningProcesses(task.getIdentifier())\')}', isScheduled: '{c:expression(expr: \'crontab.isScheduled(task)\')}', willRun: '{c:expression(expr: \'crontab.willRun(task)\')}'}">
+                                    <tr class="taskGroup_{groupIterator.index}">
+                                        <td>
+                                            <span class="t-span"><label class="btn btn-default btn-checkbox">
+                                                <f:form.checkbox name="identifiers[]" value="{task.identifier}" id="task_{task.identifier}"/><span class="t3-icon fa"></span>
+                                            </label></span>
+                                        </td>
+                                        <td class="right"><span class="t-span">{task.identifier}</span></td>
+                                        <td class="nowrap-disabled">
+                                            <span class="t-span">
+                                                <f:if condition="{c:expression(expr: '!isRunning && isScheduled && crontab.nextExecution(task) < now')}">
+                                                    <span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-warning pull-right" title="{f:translate(key: 'status.late.description')}"><f:translate key="status.late"/></span>
+                                                </f:if>
+                                                <f:if condition="{c:expression(expr: '!isRunning && willRun && !isScheduled')}">
+                                                    <span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-warning pull-right" title="{f:translate(key: 'status.singleRun.description')}"><f:translate key="status.singleRun"/></span>
+                                                </f:if>
+                                                <f:if condition="!{willRun} && !{isScheduled} && !{isRunning}">
+                                                    <span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-default pull-right"><f:translate key="status.disabled"/></span>
+                                                </f:if>
+                                                <f:if condition="{isRunning}">
+                                                    <span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-danger pull-right"><f:translate key="status.running"/></span>
+                                                </f:if>
+                                                <span class="name">
+                                                    <f:link.action action="edit" arguments="{identifier: task.identifier}">
+                                                        {task.title}
+                                                        <f:if condition="{task.additionalInformation}">
+                                                            <div class="additional-information"><f:format.nl2br>{task.additionalInformation}</f:format.nl2br></div>
+                                                        </f:if>
+                                                    </f:link.action>
+                                                </span>
+                                                <f:if condition="{task.description}">
+                                                    <span class="text-muted" style="margin-top: 0.5em;"><f:format.nl2br>{task.description}</f:format.nl2br></span>
+                                                </f:if>
+                                                <f:if condition="{task.progress}">
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="{task.progress}" aria-valuemin="0" aria-valuemax="100" style="width: {task.progress}%;">{f:translate(key:'status.progress')}:&nbsp;{task.progress}%</div>
+                                                    </div>
+                                                </f:if>
+                                            </span>
+                                        </td>
+                                        <td><span class="t-span">{task.crontabExpression}</span></td>
+                                        <td><span class="t-span">
+                                            <f:if condition="{c:expression(expr: 'task.allowsMultipleExecutions()')}">
+                                                <f:then><f:translate key="yes"/></f:then>
+                                                <f:else><f:translate key="no"/></f:else>
+                                            </f:if>
+                                        </span></td>
+                                        <td><span class="t-span">
+                                            <f:if condition="({willRun} || {isScheduled}) && !{isRunning}">
+                                                <f:else>-</f:else>
+                                                <f:then><f:format.date format="Y-m-d H:i">{c:expression(expr: 'crontab.nextExecution(task)')}</f:format.date></f:then>
+                                            </f:if>
+                                        </span></td>
+                                        <td class="nowrap">
+                                            <span class="t-span">
+                                                <div class="btn-group" role="group">
+                                                    <a data-toggle="tooltip" data-container="body" class="btn btn-default" href="{f:uri.action(action: 'edit', arguments: '{identifier: task.identifier}')}" title="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
+                                                        <core:icon identifier="actions-open"/>
+                                                    </a>
+                                                    <a data-toggle="tooltip"
+                                                       data-container="body"
+                                                       class="btn btn-default"
+                                                       href="{f:uri.action(action: 'toggleSchedule', arguments: '{identifier: task.identifier}')}"
+                                                       title="{f:translate(key:'{f:if(condition: \'{isScheduled}\', then: \'label.removeFromSchedule\', else: \'label.schedule\')}', arguments: '{identifier: task.identifier}')}"
+                                                    >
+                                                        <f:if condition="{isScheduled}">
+                                                            <f:then>
+                                                                <core:icon identifier="actions-edit-hide"/>
+                                                            </f:then>
+                                                            <f:else>
+                                                                <core:icon identifier="actions-edit-unhide"/>
+                                                            </f:else>
+                                                        </f:if>
+                                                    </a>
+                                                    <f:if condition="{isRunning}">
+                                                        <f:then>
+                                                            <span class="btn btn-default disabled">
+                                                                <core:icon identifier="empty-empty"/>
+                                                            </span>
+                                                        </f:then>
+                                                        <f:else>
+                                                            <a data-toggle="tooltip" data-container="body" class="btn btn-default t3js-modal-trigger" href="{f:uri.action(action: 'delete', arguments: '{identifier: task.identifier}')}" data-severity="warning" data-title="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:delete')}" data-button-close-text="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:cancel')}" data-content="{f:translate(key:'msg.delete', arguments: '{task: task.identifier}')}" title="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:delete')}">
+                                                                <core:icon identifier="actions-edit-delete"/>
+                                                            </a>
+                                                        </f:else>
+                                                    </f:if>
+                                                </div>
+                                                <div class="btn-group" role="group">
+                                                    <f:if condition="{isRunning}">
+                                                        <f:then>
+                                                            <div class="btn-group" role="group">
+                                                                <a
+                                                                    href="{f:uri.action(action: 'terminate', arguments: '{identifier: task.identifier}')}"
+                                                                    title="{f:translate(key:'label.stop', arguments: '{0: task.identifier}')}"
+                                                                    class="btn btn-default t3js-modal-trigger"
+                                                                    data-toggle="tooltip"
+                                                                    data-container="body"
+                                                                    data-severity="warning"
+                                                                    data-title="{f:translate(key:'label.stop', arguments: '{0: task.identifier}')}"
+                                                                    data-button-close-text="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:cancel')}"
+                                                                    data-content="{f:translate(key:'msg.stop', arguments: '{0: task.identifier}')}"
+                                                                >
+                                                                    <core:icon identifier="actions-close"/>
+                                                                </a>
+                                                            </div>
+                                                        </f:then>
+                                                        <f:else>
+                                                            <a class="btn btn-default" data-toggle="tooltip" data-container="body" title="{f:translate(key:'action.run_task_cron')}" href="{f:uri.action(action: 'scheduleForImmediateExecution', arguments: '{identifiers: {0: task.identifier}}')}">
+                                                                <core:icon identifier="extensions-scheduler-run-task-cron"/>
+                                                            </a>
+                                                        </f:else>
+                                                    </f:if>
+                                                </div>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    </f:alias>
+                                </f:for>
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </f:for>
+            <button class="btn btn-default" name="go_cron" id="scheduler_executeselected">
+                <core:icon identifier="extensions-scheduler-run-task-cron" />
+                <f:translate key="label.cronjobSelected" />
+            </button>
+            </f:form>
+        </f:then>
+    </f:if>
+    </div>
 </f:section>
 
 </html>
