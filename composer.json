@@ -20,9 +20,9 @@
     },
     "require": {
         "dragonmantank/cron-expression": "^2.3",
-        "helhum/typo3-console": "^6",
-        "typo3/cms-core": "^10.4.23",
-        "typo3/cms-extbase": "^10.4.23"
+        "helhum/typo3-console": "^7",
+        "typo3/cms-core": "^11.5",
+        "typo3/cms-extbase": "^11.5"
     },
     "suggest": {
         "typo3/cms-scheduler": "To be able to execute TYPO3 scheduler tasks"
