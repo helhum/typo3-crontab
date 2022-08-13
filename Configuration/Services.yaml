@@ -1,0 +1,29 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Helhum\TYPO3\Crontab\Command\:
+        resource: '../Classes/Command/*'
+
+    Helhum\TYPO3\Crontab\Command\CrontabCommand:
+        tags:
+            -   name: 'console.command'
+                command: 'crontab:run'
+                description: 'Start Crontab from the command line.'
+                schedulable: false
+
+    Helhum\TYPO3\Crontab\Command\CrontabProcessCommand:
+        tags:
+            -   name: 'console.command'
+                command: 'crontab:execute'
+                description: 'Directly runs the Crontab Task with given identifier.'
+                schedulable: false
+
+    Helhum\TYPO3\Crontab\Command\CrontabScheduleCommand:
+        tags:
+            -   name: 'console.command'
+                command: 'crontab:schedule'
+                description: 'Adds/removes given tasks to/from schedule'
+                schedulable: false
