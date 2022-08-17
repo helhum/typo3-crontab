@@ -22,6 +22,7 @@ class TaskProcess extends Process
 
     /**
      * Keep process id for usage after the process has been stopped
+     *
      * @var int
      */
     private $processId;

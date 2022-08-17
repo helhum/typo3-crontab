@@ -65,6 +65,7 @@ class CrontabScheduleCommand extends Command
      * @param OutputInterface $output
      *
      * @throws FailedSubProcessCommandException
+     *
      * @return int
      */
     public function execute(InputInterface $input, OutputInterface $output): int

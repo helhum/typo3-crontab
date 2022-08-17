@@ -7,6 +7,9 @@ services:
     Helhum\TYPO3\Crontab\Command\:
         resource: '../Classes/Command/*'
 
+    Helhum\TYPO3\Crontab\Repository\:
+        resource: '../Classes/Repository/*'
+
     Helhum\TYPO3\Crontab\Command\CrontabCommand:
         tags:
             -   name: 'console.command'
@@ -26,4 +29,11 @@ services:
             -   name: 'console.command'
                 command: 'crontab:schedule'
                 description: 'Adds/removes given tasks to/from schedule'
+                schedulable: false
+
+    Helhum\TYPO3\Crontab\Command\CrontabImportSchedulerTasksCommand:
+        tags:
+            -   name: 'console.command'
+                command: 'crontab:import-scheduler-tasks'
+                description: 'Import Scheduler Tasks.'
                 schedulable: false

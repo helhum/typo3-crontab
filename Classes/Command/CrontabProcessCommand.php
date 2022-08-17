@@ -31,7 +31,7 @@ class CrontabProcessCommand extends Command
 This will execute the given task even when not scheduled, or it is already running.
 Executing it directly will also NOT mark it as a running scheduled task.
 EOH
-)
+            )
             ->addArgument('taskIdentifier', InputArgument::REQUIRED, 'Identifier of task that should be run');
     }
 
