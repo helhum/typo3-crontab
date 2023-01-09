@@ -78,7 +78,7 @@ class ProcessManager implements LoggerAwareInterface
                     $this->dispatchEvent($finishedEvent);
                     continue;
                 }
-                $this->logger->error(sprintf('Failed to successfully execute task "%s" process with pid "%d".', $process->getTaskIdentifier(), $process->getFormerPid()));
+                $this->logger->notice(sprintf('Failed to successfully execute task "%s" process with pid "%d".', $process->getTaskIdentifier(), $process->getFormerPid()));
                 $this->dispatchEvent($finishedEvent);
             }
             if ($isRunning && $this->shouldProcessBeStopped($process)) {
