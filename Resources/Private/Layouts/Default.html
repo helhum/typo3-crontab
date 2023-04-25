@@ -3,7 +3,6 @@
     xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
     data-namespace-typo3-fluid="true">
 
-<be:moduleLayout>
     <f:be.pageRenderer
         includeRequireJsModules="{
             0:'TYPO3/CMS/Crontab/Scheduler',
@@ -14,12 +13,10 @@
         }"
     />
 
-    <be:moduleLayout.button.shortcutButton displayName="{f:translate(id: shortcutLabel)}" />
 
     <f:render section="Content" />
     <f:render partial="ServerTime" arguments="{now: now}" />
 
-</be:moduleLayout>
 
 
 </html>

@@ -23,10 +23,11 @@
         }
     },
     "require": {
+        "php": "~7.4.0 || ~8.0.0 || ~8.1.0 || ~8.2.0",
         "dragonmantank/cron-expression": "^2.3",
-        "helhum/typo3-console": "^7",
-        "typo3/cms-core": "^11.5",
-        "typo3/cms-extbase": "^11.5"
+        "helhum/typo3-console": "^7 || ^8",
+        "typo3/cms-core": "^11.5 || ^12.4",
+        "typo3/cms-extbase": "^11.5 || ^12.4"
     },
     "suggest": {
         "typo3/cms-scheduler": "To be able to execute TYPO3 scheduler tasks"
