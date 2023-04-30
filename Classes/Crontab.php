@@ -22,7 +22,7 @@ class Crontab
      */
     private $connection;
 
-    public function __construct(TaskRepository $taskRepository = null, Connection $connection = null)
+    public function __construct(TaskRepository $taskRepository = null)
     {
         $this->taskRepository = $taskRepository ?? GeneralUtility::makeInstance(TaskRepository::class);
         $this->connection = $connection ?? GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(self::scheduledTable);
@@ -117,7 +117,7 @@ class Crontab
             ['next_execution'],
             self::scheduledTable,
             ['identifier' => $definition->getIdentifier()]
-        )->fetchColumn(0);
+        )->fetchOne();
         $nextExecution = new \DateTime('@' . $timestamp);
         $nextExecution->setTimezone((new \DateTime())->getTimezone());
 

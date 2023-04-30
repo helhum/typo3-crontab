@@ -5,6 +5,8 @@ namespace Helhum\TYPO3\Crontab\Controller;
 use Helhum\TYPO3\Crontab\Crontab;
 use Helhum\TYPO3\Crontab\Process\ProcessManager;
 use Helhum\TYPO3\Crontab\Repository\TaskRepository;
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
@@ -25,14 +27,20 @@ class CrontabModuleController extends ActionController
      */
     private $processManager;
 
-    public function __construct(TaskRepository $taskRepository, Crontab $crontab, ProcessManager $processManager = null)
+    /**
+     * @var ModuleTemplateFactory
+     */
+    private $moduleTemplateFactory;
+
+    public function __construct(TaskRepository $taskRepository, Crontab $crontab, ModuleTemplateFactory $moduleTemplateFactory, ProcessManager $processManager = null)
     {
         $this->taskRepository = $taskRepository;
         $this->crontab = $crontab;
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
         $this->processManager = $processManager ?? GeneralUtility::makeInstance(ProcessManager::class, 1);
     }
 
-    public function listAction(): string
+    public function listAction(): ResponseInterface
     {
         $this->view->assignMultiple([
             'groupedTasks' => $this->taskRepository->getGroupedTasks(),
@@ -42,10 +50,13 @@ class CrontabModuleController extends ActionController
             'now' => new \DateTimeImmutable(),
         ]);
 
-        return $this->view->render();
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        // Adding title, menus, buttons, etc. using $moduleTemplate ...
+        $moduleTemplate->setContent($this->view->render());
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
-    public function toggleScheduleAction(string $identifier): void
+    public function toggleScheduleAction(string $identifier): ResponseInterface
     {
         $taskDefinition = $this->taskRepository->findByIdentifier($identifier);
         if ($this->crontab->isScheduled($taskDefinition)) {
@@ -54,10 +65,10 @@ class CrontabModuleController extends ActionController
             $this->crontab->schedule($taskDefinition);
         }
 
-        $this->redirect('list');
+        return $this->redirect('list');
     }
 
-    public function scheduleForImmediateExecutionAction(array $identifiers): void
+    public function scheduleForImmediateExecutionAction(array $identifiers): ResponseInterface
     {
         foreach ($identifiers as $identifier) {
             $this->crontab->scheduleForImmediateExecution(
@@ -65,14 +76,14 @@ class CrontabModuleController extends ActionController
             );
         }
 
-        $this->redirect('list');
+        return $this->redirect('list');
     }
 
-    public function terminateAction(string $identifier): void
+    public function terminateAction(string $identifier): ResponseInterface
     {
         $this->processManager->terminateAllProcesses($identifier);
         $this->addFlashMessage(sprintf('Terminated processes for task "%s"', $identifier));
 
-        $this->redirect('list');
+        return $this->redirect('list');
     }
 }

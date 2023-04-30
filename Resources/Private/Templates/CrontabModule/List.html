@@ -54,16 +54,16 @@
                                         <td class="nowrap-disabled">
                                             <span class="t-span">
                                                 <f:if condition="{c:expression(expr: '!isRunning && isScheduled && crontab.nextExecution(task) < now')}">
-                                                    <span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-warning pull-right" title="{f:translate(key: 'status.late.description')}"><f:translate key="status.late"/></span>
+                                                    <span data-toggle="tooltip" data-container="body" data-placement="auto" class="badge badge-warning pull-right" title="{f:translate(key: 'status.late.description')}"><f:translate key="status.late"/></span>
                                                 </f:if>
                                                 <f:if condition="{c:expression(expr: '!isRunning && willRun && !isScheduled')}">
-                                                    <span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-warning pull-right" title="{f:translate(key: 'status.singleRun.description')}"><f:translate key="status.singleRun"/></span>
+                                                    <span data-toggle="tooltip" data-container="body" data-placement="auto" class="badge badge-warning pull-right" title="{f:translate(key: 'status.singleRun.description')}"><f:translate key="status.singleRun"/></span>
                                                 </f:if>
                                                 <f:if condition="!{willRun} && !{isScheduled} && !{isRunning}">
-                                                    <span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-default pull-right"><f:translate key="status.disabled"/></span>
+                                                    <span data-toggle="tooltip" data-container="body" data-placement="auto" class="badge badge-default pull-right"><f:translate key="status.disabled"/></span>
                                                 </f:if>
                                                 <f:if condition="{isRunning}">
-                                                    <span data-toggle="tooltip" data-container="body" data-placement="auto" class="label label-danger pull-right"><f:translate key="status.running"/></span>
+                                                    <span data-toggle="tooltip" data-container="body" data-placement="auto" class="badge badge-danger pull-right"><f:translate key="status.running"/></span>
                                                 </f:if>
                                                 <span class="name">
                                                     <f:link.action action="edit" arguments="{identifier: task.identifier}">

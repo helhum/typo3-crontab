@@ -4,6 +4,16 @@ services:
         autoconfigure: true
         public: false
 
+    Helhum\TYPO3\Crontab\Crontab:
+        class: 'Helhum\TYPO3\Crontab\Crontab'
+        arguments: []
+
+    Helhum\TYPO3\Crontab\ViewHelpers\:
+        resource: '../Classes/ViewHelpers/*'
+
+    Helhum\TYPO3\Crontab\Controller\:
+        resource: '../Classes/Controller/*'
+
     Helhum\TYPO3\Crontab\Command\:
         resource: '../Classes/Command/*'
 
@@ -37,3 +47,10 @@ services:
                 command: 'crontab:import-scheduler-tasks'
                 description: 'Import Scheduler Tasks.'
                 schedulable: false
+
+    Helhum\TYPO3\Crontab\EventListener\BeforeModuleCreationEventListener:
+        tags:
+            -
+                name: 'event.listener'
+                identifier: 'helhum/t-y-p-o3/crontab/before-module-creation-event-listener'
+                event: 'TYPO3\CMS\Backend\Module\BeforeModuleCreationEvent'
