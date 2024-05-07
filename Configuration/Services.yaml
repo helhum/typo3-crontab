@@ -52,5 +52,5 @@ services:
         tags:
             -
                 name: 'event.listener'
-                identifier: 'helhum/t-y-p-o3/crontab/before-module-creation-event-listener'
+                identifier: 'helhum/crontab/before-module-creation-event-listener'
                 event: 'TYPO3\CMS\Backend\Module\BeforeModuleCreationEvent'
