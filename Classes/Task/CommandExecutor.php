@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab\Task;
 
-use Helhum\Typo3Console\Mvc\Cli\Symfony\Input\ArgvInput;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\NullOutput;
