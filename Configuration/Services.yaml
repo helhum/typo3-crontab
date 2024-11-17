@@ -24,14 +24,14 @@ services:
         tags:
             -   name: 'console.command'
                 command: 'crontab:run'
-                description: 'Start Crontab from the command line.'
+                description: 'Start Crontab from the command line'
                 schedulable: false
 
     Helhum\TYPO3\Crontab\Command\CrontabProcessCommand:
         tags:
             -   name: 'console.command'
                 command: 'crontab:execute'
-                description: 'Directly runs the Crontab Task with given identifier.'
+                description: 'Directly runs the Crontab Task with given identifier'
                 schedulable: false
 
     Helhum\TYPO3\Crontab\Command\CrontabScheduleCommand:
@@ -45,12 +45,11 @@ services:
         tags:
             -   name: 'console.command'
                 command: 'crontab:import-scheduler-tasks'
-                description: 'Import Scheduler Tasks.'
+                description: 'Import Scheduler Tasks'
                 schedulable: false
 
     Helhum\TYPO3\Crontab\EventListener\BeforeModuleCreationEventListener:
         tags:
             -
                 name: 'event.listener'
-                identifier: 'helhum/t-y-p-o3/crontab/before-module-creation-event-listener'
-                event: 'TYPO3\CMS\Backend\Module\BeforeModuleCreationEvent'
+                identifier: 'helhum/typo3-crontab/before-module-creation-event-listener'
