@@ -121,7 +121,7 @@ class ProcessManager implements LoggerAwareInterface
             ['identifier' => $taskIdentifier]
         );
 
-        foreach ($result as $row) {
+        foreach ($result->fetchAllAssociative() as $row) {
             $processId = (int)$row['process_id'];
             $this->logger->info(sprintf('Terminating task "%s" process with pid "%d".', $taskIdentifier, $processId));
             // We're only removing it from our process tracking table and let the parent process
@@ -140,7 +140,7 @@ class ProcessManager implements LoggerAwareInterface
             ['identifier' => $taskIdentifier]
         );
 
-        foreach ($result as $row) {
+        foreach ($result->fetchAllAssociative() as $row) {
             $processId = (int)$row['process_id'];
             $isRunning = posix_getpgid($processId) !== false;
             if (!$isRunning) {
