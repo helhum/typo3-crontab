@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace Helhum\TYPO3\Crontab\Process;
 
 use Helhum\TYPO3\Crontab\Task\TaskDefinition;
-use Helhum\Typo3Console\Mvc\Cli\Symfony\Application;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -42,7 +41,7 @@ class TaskProcess extends Process
 
     public static function createFromTaskDefinition(TaskDefinition $task): self
     {
-        if (!isset($_SERVER['argv'][0]) && strpos($_SERVER['argv'][0], Application::COMMAND_NAME) === false) {
+        if (!isset($_SERVER['argv'][0]) && strpos($_SERVER['argv'][0], 'typo3') === false) {
             throw new RuntimeException('Tried to create typo3 command runner from wrong context', 1557940706);
         }
         $typo3CommandPath = $_SERVER['argv'][0];
