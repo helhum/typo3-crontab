@@ -1,9 +1,9 @@
 <?php
-$EM_CONF[$_EXTKEY] = [
+$EM_CONF['crontab'] = [
     'title' => 'Crontab',
-    'description' => 'Advanced scheduling for TYPO3 Console commands (and TYPO3 Scheduler tasks)',
+    'description' => 'Advanced scheduling for TYPO3 commands (and TYPO3 Scheduler tasks)',
     'category' => 'misc',
-    'version' => '0.1.0',
+    'version' => '0.7.0',
     'state' => 'stable',
     'uploadfolder' => 0,
     'createDirs' => '',
@@ -13,7 +13,7 @@ $EM_CONF[$_EXTKEY] = [
     'author_company' => '',
     'constraints' => [
         'depends' => [
-            'typo3' => '10.4.0-10.4.99',
+            'typo3' => '11.5.0-12.4.99',
         ],
         'conflicts' => [],
         'suggests' => [

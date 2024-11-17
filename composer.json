@@ -15,27 +15,23 @@
     ],
     "config": {
         "sort-packages": true,
-        "vendor-dir": ".Build/vendor",
-        "bin-dir": ".Build/bin",
         "allow-plugins": {
             "typo3/cms-composer-installers": true,
             "typo3/class-alias-loader": true
         }
     },
     "require": {
+        "php": ">=8.1",
         "dragonmantank/cron-expression": "^2.3",
-        "helhum/typo3-console": "^7",
-        "typo3/cms-core": "^11.5",
-        "typo3/cms-extbase": "^11.5"
+        "typo3/cms-core": "^11.5 || ^12.4",
+        "typo3/cms-extbase": "^11.5 || ^12.4"
     },
     "suggest": {
         "typo3/cms-scheduler": "To be able to execute TYPO3 scheduler tasks"
     },
     "extra": {
         "typo3/cms": {
-            "extension-key": "crontab",
-            "app-dir": ".Build",
-            "web-dir": ".Build/public"
+            "extension-key": "crontab"
         }
     },
     "autoload": {

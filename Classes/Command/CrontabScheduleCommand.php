@@ -5,7 +5,6 @@ namespace Helhum\TYPO3\Crontab\Command;
 use Helhum\TYPO3\Crontab\Crontab;
 use Helhum\TYPO3\Crontab\Repository\TaskRepository;
 use Helhum\TYPO3\Crontab\Task\TaskDefinition;
-use Helhum\Typo3Console\Mvc\Cli\FailedSubProcessCommandException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -60,13 +59,6 @@ class CrontabScheduleCommand extends Command
 
     /**
      * Add/remove given tasks to/from schedule
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @throws FailedSubProcessCommandException
-     *
-     * @return int
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
