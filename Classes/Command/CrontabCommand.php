@@ -20,7 +20,7 @@ class CrontabCommand extends Command
     /**
      * Configure the command by defining the name, options and arguments
      */
-    public function configure()
+    public function configure(): void
     {
         $this
             ->setDescription('Start Crontab from the command line.')
@@ -47,7 +47,7 @@ class CrontabCommand extends Command
      *
      * @return int
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $lock = GeneralUtility::makeInstance(LockFactory::class)->createLocker('crontab_process_manager', LockingStrategyInterface::LOCK_CAPABILITY_EXCLUSIVE | LockingStrategyInterface::LOCK_CAPABILITY_NOBLOCK);
 

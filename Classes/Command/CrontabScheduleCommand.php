@@ -34,7 +34,7 @@ class CrontabScheduleCommand extends Command
     /**
      * Configure the command by defining the name, options and arguments
      */
-    public function configure()
+    public function configure(): void
     {
         $this
             ->setDescription('Adds/removes given tasks to/from schedule')
