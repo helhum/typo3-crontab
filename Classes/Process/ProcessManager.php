@@ -37,7 +37,7 @@ class ProcessManager implements LoggerAwareInterface
      */
     private $listeners;
 
-    public function __construct(int $forks, Connection $databaseConnection = null)
+    public function __construct(int $forks, ?Connection $databaseConnection = null)
     {
         $this->forks = $forks;
         $this->processes = new \SplObjectStorage();

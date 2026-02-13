@@ -10,7 +10,7 @@ interface TaskExecutor
 {
     public static function create(array $options): self;
 
-    public function run(Application $application, InputInterface $input = null, OutputInterface $output = null): bool;
+    public function run(Application $application, ?InputInterface $input = null, ?OutputInterface $output = null): bool;
 
     public function getTitle(): ?string;
 

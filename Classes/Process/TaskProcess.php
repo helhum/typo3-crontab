@@ -68,7 +68,7 @@ class TaskProcess extends Process
         return new self($task, $commandLine, ['TYPO3_CONSOLE_SUB_PROCESS' => true]);
     }
 
-    public function start(callable $callback = null, array $env = []): void
+    public function start(?callable $callback = null, array $env = []): void
     {
         parent::start($callback, $env);
         $this->processId = $this->getPid();

@@ -9,22 +9,16 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 class ExpressionViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
-
     protected $escapeOutput = false;
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('expr', 'string', 'Expression to evaluate', true);
     }
 
-    public static function renderStatic(
-        array $arguments,
-        \Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ) {
+    public function render()
+    {
         $expressionLanguage = new ExpressionLanguage();
-
-        return $expressionLanguage->evaluate($arguments['expr'], $renderingContext->getVariableProvider()->getAll());
+        return $expressionLanguage->evaluate($this->arguments['expr'], $this->renderingContext->getVariableProvider()->getAll());
     }
 }

@@ -33,7 +33,7 @@ class SchedulerTaskExecutor implements TaskExecutor
         return new self($options);
     }
 
-    public function run(Application $application, InputInterface $input = null, OutputInterface $output = null): bool
+    public function run(Application $application, ?InputInterface $input = null, ?OutputInterface $output = null): bool
     {
         return $this->schedulerTask->execute();
     }

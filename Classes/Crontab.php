@@ -22,7 +22,7 @@ class Crontab
      */
     private $connection;
 
-    public function __construct(TaskRepository $taskRepository = null)
+    public function __construct(?TaskRepository $taskRepository = null)
     {
         $this->taskRepository = $taskRepository ?? GeneralUtility::makeInstance(TaskRepository::class);
         $this->connection = $connection ?? GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(self::scheduledTable);
@@ -136,7 +136,7 @@ class Crontab
                 'next_execution' => 'ASC',
             ]
         );
-        while ($scheduleInformation = $statement->fetch()) {
+        while ($scheduleInformation = $statement->fetchAssociative()) {
             if ($scheduleInformation['next_execution'] > time()) {
                 break;
             }

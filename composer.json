@@ -23,8 +23,8 @@
     "require": {
         "php": ">=8.1",
         "dragonmantank/cron-expression": "^2.3",
-        "typo3/cms-core": "^11.5 || ^12.4",
-        "typo3/cms-extbase": "^11.5 || ^12.4"
+        "typo3/cms-core": "^12.4 || ^13.4",
+        "typo3/cms-extbase": "^12.4 || ^13.4"
     },
     "suggest": {
         "typo3/cms-scheduler": "To be able to execute TYPO3 scheduler tasks"

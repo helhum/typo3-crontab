@@ -25,7 +25,7 @@ class CommandExecutor implements TaskExecutor
         return new self($options);
     }
 
-    public function run(Application $application, InputInterface $input = null, OutputInterface $output = null): bool
+    public function run(Application $application, ?InputInterface $input = null, ?OutputInterface $output = null): bool
     {
         $command = $this->options['command'];
         $arguments = $this->options['arguments'] ?? [];

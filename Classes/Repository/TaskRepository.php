@@ -12,7 +12,7 @@ class TaskRepository
      */
     private $taskConfiguration;
 
-    public function __construct(array $taskConfiguration = null)
+    public function __construct(?array $taskConfiguration = null)
     {
         $this->taskConfiguration = $taskConfiguration ?? $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['crontab'] ?? [];
     }

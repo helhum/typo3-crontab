@@ -1,17 +1,17 @@
 <?php
 
 return [
-    'web_module' => [
+    'module-crontab' => [
         'parent' => 'system',
-        'position' => ['after' => 'backend_user_management'],
-        'access' => 'admin',
-        'workspaces' => '*',
-        'path' => '/module/system/crontab',
+        'position' => [
+            'after' => 'backend_user_management',
+        ],
         'iconIdentifier' => 'module-crontab',
+        'access' => 'admin',
         'labels' => 'LLL:EXT:crontab/Resources/Private/Language/locallang_mod.xlf',
-        'extensionName' => 'crontab',
+        'extensionName' => 'Crontab',
         'controllerActions' => [
-            \Helhum\TYPO3\Crontab\Controller\CrontabModuleController::class => [
+            'Helhum\TYPO3\Crontab\Controller\CrontabModuleController' => [
                 'list',
                 'toggleSchedule',
                 'terminate',
