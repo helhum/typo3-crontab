@@ -6,10 +6,7 @@ use Helhum\TYPO3\Crontab\Error\ConfigurationValidationFailed;
 
 class ProcessDefinition
 {
-    /**
-     * @var TaskExecutor
-     */
-    private $executor;
+    private \Helhum\TYPO3\Crontab\Task\TaskExecutor $executor;
 
     public function __construct(array $config)
     {
@@ -57,7 +54,7 @@ class ProcessDefinition
         if (empty($config['type'])) {
             throw new ConfigurationValidationFailed('Task type must not be empty', 1558097917);
         }
-        if ($config['type'] !== 'command' && $config['type'] !== 'scheduler' && $config['type'] !== 'script') {
+        if (!in_array($config['type'], ['command', 'scheduler', 'script'], true)) {
             throw new ConfigurationValidationFailed('Task type must be "command", "scheduler" or "script"', 1558097974);
         }
     }

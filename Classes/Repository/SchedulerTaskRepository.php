@@ -15,6 +15,7 @@ use TYPO3\CMS\Scheduler\Task\ExecuteSchedulableCommandTask;
 
 class SchedulerTaskRepository
 {
+    public $optionValues;
     private ConnectionPool $connectionPool;
     private LoggerInterface $logger;
 

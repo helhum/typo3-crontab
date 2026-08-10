@@ -4,10 +4,7 @@ namespace Helhum\TYPO3\Crontab\Event;
 
 final class ProcessStarted extends Event
 {
-    /**
-     * @var string
-     */
-    private $taskIdentifier;
+    private string $taskIdentifier;
 
     public function __construct(string $taskIdentifier)
     {

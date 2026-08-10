@@ -17,6 +17,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class CrontabCommand extends Command
 {
+    public function __construct(
+        private readonly Crontab $crontab,
+        private readonly TaskRepository $taskRepository,
+    ) {
+        parent::__construct();
+    }
+
     /**
      * Configure the command by defining the name, options and arguments
      */
@@ -41,11 +48,6 @@ class CrontabCommand extends Command
 
     /**
      * Execute crontab tasks
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -57,24 +59,22 @@ class CrontabCommand extends Command
             $defaultWorkerTimeout = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['crontab']['workerTimeout'] ?? 0;
             $defaultWorkerForks = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['crontab']['workerForks'] ?? 1;
             $idleSleep = (int)($GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['crontab']['idleSleep'] ?? 5);
-            $taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
-            $crontab = GeneralUtility::makeInstance(Crontab::class, $taskRepository);
             $processManager = GeneralUtility::makeInstance(ProcessManager::class, (int)($input->getOption('forks') ?? $defaultWorkerForks));
-            $crontab->prepareSchedulingFinishedTasks($processManager);
+            $this->crontab->prepareSchedulingFinishedTasks($processManager);
 
             $runUntil = time() + (int)($input->getOption('timeout') ?? $defaultWorkerTimeout);
             do {
                 $tasksFound = false;
-                foreach ($crontab->dueTasks() as $taskIdentifier) {
+                foreach ($this->crontab->dueTasks() as $taskIdentifier) {
                     $processManager->add(
-                        TaskProcess::createFromTaskDefinition($taskRepository->findByIdentifier($taskIdentifier))
+                        TaskProcess::createFromTaskDefinition($this->taskRepository->findByIdentifier($taskIdentifier))
                     );
                     $tasksFound = true;
                 }
-                
+
                 // Monitor processes to finish and wait for free spot
                 $processManager->wait();
-                
+
                 // If no tasks were found, sleep a bit longer to reduce CPU usage
                 if (!$tasksFound) {
                     sleep($idleSleep);

@@ -10,10 +10,7 @@ use Symfony\Component\Process\Process;
 
 class ScriptExecutor implements TaskExecutor
 {
-    /**
-     * @var array
-     */
-    private $options;
+    private array $options;
 
     public function __construct(array $options)
     {
@@ -25,7 +22,7 @@ class ScriptExecutor implements TaskExecutor
         return new self($options);
     }
 
-    public function run(Application $application, InputInterface $input = null, OutputInterface $output = null): bool
+    public function run(Application $application, ?InputInterface $input = null, ?OutputInterface $output = null): bool
     {
         $command = str_replace('@php ', '', $this->options['script']);
         $arguments = $this->options['arguments'] ?? [];
@@ -83,5 +80,10 @@ class ScriptExecutor implements TaskExecutor
     public function getProgress(): float
     {
         return 0.0;
+    }
+
+    public function getArguments(): array
+    {
+        return $this->options['arguments'] ?? [];
     }
 }

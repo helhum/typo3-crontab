@@ -12,27 +12,15 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 class CrontabModuleController extends ActionController
 {
-    /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
+    private \Helhum\TYPO3\Crontab\Repository\TaskRepository $taskRepository;
 
-    /**
-     * @var Crontab
-     */
-    private $crontab;
+    private \Helhum\TYPO3\Crontab\Crontab $crontab;
 
-    /**
-     * @var ProcessManager
-     */
-    private $processManager;
+    private ProcessManager $processManager;
 
-    /**
-     * @var ModuleTemplateFactory
-     */
-    private $moduleTemplateFactory;
+    private \TYPO3\CMS\Backend\Template\ModuleTemplateFactory $moduleTemplateFactory;
 
-    public function __construct(TaskRepository $taskRepository, Crontab $crontab, ModuleTemplateFactory $moduleTemplateFactory, ProcessManager $processManager = null)
+    public function __construct(TaskRepository $taskRepository, Crontab $crontab, ModuleTemplateFactory $moduleTemplateFactory, ?ProcessManager $processManager = null)
     {
         $this->taskRepository = $taskRepository;
         $this->crontab = $crontab;
@@ -42,7 +30,8 @@ class CrontabModuleController extends ActionController
 
     public function listAction(): ResponseInterface
     {
-        $this->view->assignMultiple([
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->assignMultiple([
             'groupedTasks' => $this->taskRepository->getGroupedTasks(),
             'crontab' => $this->crontab,
             'processManager' => $this->processManager,
@@ -50,10 +39,7 @@ class CrontabModuleController extends ActionController
             'now' => new \DateTimeImmutable(),
         ]);
 
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        // Adding title, menus, buttons, etc. using $moduleTemplate ...
-        $moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($moduleTemplate->renderContent());
+        return $moduleTemplate->renderResponse('CrontabModule/List');
     }
 
     public function toggleScheduleAction(string $identifier): ResponseInterface

@@ -6,45 +6,24 @@ use Cron\CronExpression;
 
 class TaskDefinition
 {
-    /**
-     * @var string
-     */
-    private $identifier;
+    private string $identifier;
 
-    /**
-     * @var string
-     */
-    private $title;
+    private string $title;
 
-    /**
-     * @var string
-     */
-    private $additionalInformation;
+    private string $additionalInformation;
 
-    /**
-     * @var string
-     */
-    private $description;
+    private string $description;
 
-    /**
-     * @var bool
-     */
-    private $allowMultipleExecutions;
+    private bool $allowMultipleExecutions;
 
     /**
      * @var CronExpression
      */
     private $cronExpression;
 
-    /**
-     * @var ProcessDefinition
-     */
-    private $processDefinition;
+    private \Helhum\TYPO3\Crontab\Task\ProcessDefinition $processDefinition;
 
-    /**
-     * @var bool
-     */
-    private $retryOnFailure;
+    private bool $retryOnFailure;
 
     private function __construct(
         string $identifier,

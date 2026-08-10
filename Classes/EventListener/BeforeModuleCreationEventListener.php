@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 namespace Helhum\TYPO3\Crontab\EventListener;
 
 use TYPO3\CMS\Backend\Module\BeforeModuleCreationEvent;

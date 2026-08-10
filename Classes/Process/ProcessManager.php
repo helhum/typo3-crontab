@@ -17,15 +17,12 @@ class ProcessManager implements LoggerAwareInterface
 
     private const runningTable = 'tx_crontab_running';
 
-    /**
-     * @var int
-     */
-    private $forks;
+    private int $forks;
 
     /**
      * @var TaskProcess[]|\SplObjectStorage
      */
-    private $processes;
+    private \SplObjectStorage $processes;
 
     /**
      * @var Connection
@@ -37,7 +34,7 @@ class ProcessManager implements LoggerAwareInterface
      */
     private $listeners;
 
-    public function __construct(int $forks, Connection $databaseConnection = null)
+    public function __construct(int $forks, ?Connection $databaseConnection = null)
     {
         $this->forks = $forks;
         $this->processes = new \SplObjectStorage();

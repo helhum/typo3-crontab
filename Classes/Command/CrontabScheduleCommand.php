@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class CrontabScheduleCommand extends Command
 {
@@ -21,15 +20,12 @@ class CrontabScheduleCommand extends Command
         'remove-all' => 'removeAllTasksAction',
     ];
 
-    /**
-     * @var Crontab
-     */
-    private $crontab;
-
-    /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
+    public function __construct(
+        private readonly Crontab $crontab,
+        private readonly TaskRepository $taskRepository,
+    ) {
+        parent::__construct();
+    }
 
     /**
      * Configure the command by defining the name, options and arguments
@@ -68,9 +64,6 @@ class CrontabScheduleCommand extends Command
 
             return 1;
         }
-
-        $this->crontab = GeneralUtility::makeInstance(Crontab::class);
-        $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
 
         return $this->{self::actionMethodMap[$action]}($input, $output);
     }
@@ -131,7 +124,7 @@ class CrontabScheduleCommand extends Command
         return 0;
     }
 
-    private function addAllTasksAction(InputInterface $input, OutputInterface $output): int
+    private function addAllTasksAction(OutputInterface $output): int
     {
         foreach ($this->taskRepository->findAll() as $taskDefinition) {
             $this->addTask($taskDefinition);
@@ -141,7 +134,7 @@ class CrontabScheduleCommand extends Command
         return 0;
     }
 
-    private function removeAllTasksAction(InputInterface $input, OutputInterface $output): int
+    private function removeAllTasksAction(OutputInterface $output): int
     {
         foreach ($this->taskRepository->findAll() as $taskDefinition) {
             $this->removeTask($taskDefinition);

@@ -14,10 +14,7 @@ class TaskProcess extends Process
      */
     private const command = 'crontab:execute';
 
-    /**
-     * @var TaskDefinition
-     */
-    private $task;
+    private \Helhum\TYPO3\Crontab\Task\TaskDefinition $task;
 
     /**
      * Keep process id for usage after the process has been stopped
@@ -28,10 +25,6 @@ class TaskProcess extends Process
 
     /**
      * Don't allow object creation without factory method
-     *
-     * @param TaskDefinition $task
-     * @param array $commandLine
-     * @param array $environmentVars
      */
     private function __construct(TaskDefinition $task, array $commandLine, array $environmentVars = [])
     {

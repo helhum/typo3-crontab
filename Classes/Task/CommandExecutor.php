@@ -10,10 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CommandExecutor implements TaskExecutor
 {
-    /**
-     * @var array
-     */
-    private $options;
+    private array $options;
 
     public function __construct(array $options)
     {
@@ -25,7 +22,7 @@ class CommandExecutor implements TaskExecutor
         return new self($options);
     }
 
-    public function run(Application $application, InputInterface $input = null, OutputInterface $output = null): bool
+    public function run(Application $application, ?InputInterface $input = null, ?OutputInterface $output = null): bool
     {
         $command = $this->options['command'];
         $arguments = $this->options['arguments'] ?? [];
@@ -55,5 +52,10 @@ class CommandExecutor implements TaskExecutor
     public function getProgress(): float
     {
         return 0.0;
+    }
+
+    public function getArguments(): array
+    {
+        return $this->options['arguments'] ?? [];
     }
 }

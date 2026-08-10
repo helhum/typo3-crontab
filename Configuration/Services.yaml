@@ -5,8 +5,7 @@ services:
         public: false
 
     Helhum\TYPO3\Crontab\Crontab:
-        class: 'Helhum\TYPO3\Crontab\Crontab'
-        arguments: []
+        public: true
 
     Helhum\TYPO3\Crontab\ViewHelpers\:
         resource: '../Classes/ViewHelpers/*'
@@ -46,6 +45,20 @@ services:
             -   name: 'console.command'
                 command: 'crontab:import-scheduler-tasks'
                 description: 'Import Scheduler Tasks'
+                schedulable: false
+
+    Helhum\TYPO3\Crontab\Command\CrontabListCommand:
+        tags:
+            -   name: 'console.command'
+                command: 'crontab:list'
+                description: 'List all configured Crontab tasks'
+                schedulable: false
+
+    Helhum\TYPO3\Crontab\Command\CrontabShowCommand:
+        tags:
+            -   name: 'console.command'
+                command: 'crontab:show'
+                description: 'Show all details about a single Crontab task'
                 schedulable: false
 
     Helhum\TYPO3\Crontab\EventListener\BeforeModuleCreationEventListener:

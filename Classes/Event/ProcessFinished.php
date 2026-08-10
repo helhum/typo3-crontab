@@ -4,15 +4,9 @@ namespace Helhum\TYPO3\Crontab\Event;
 
 final class ProcessFinished extends Event
 {
-    /**
-     * @var string
-     */
-    private $taskIdentifier;
+    private string $taskIdentifier;
 
-    /**
-     * @var bool
-     */
-    private $success;
+    private bool $success;
 
     public function __construct(string $taskIdentifier, bool $success)
     {
